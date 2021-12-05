@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "name": "Restaurant 1",
+    "description": "Restaurant 1 description here",
+    "imageURL": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80"
+  },
+  {
+    "id": 2,
+    "name": "Restaurant 2",
+    "description": "Restaurant 2 description here",
+    "imageURL": "https://images.unsplash.com/photo-1467003909585-2f8a72700288?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80"
+  },
+  {
+    "id": 3,
+    "name": "Restaurant 3",
+    "description": "Restaurant 3 description here",
+    "imageURL": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80"
+  },
+  {
+    "id": 4,
+    "name": "Restaurant 4",
+    "description": "Restaurant 4 description here",
+    "imageURL": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80"
+  }
+]
