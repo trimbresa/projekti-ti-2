@@ -8,13 +8,19 @@ const User = (sequelize) => {
             type: DataTypes.TEXT,
             primaryKey: true
         },
-        role: DataTypes.STRING(20),
         firstName: DataTypes.STRING(255),
         lastName: DataTypes.STRING(255),
         dob: DataTypes.DATE,
-        email: DataTypes.STRING(255),
+        email: {
+            type: DataTypes.STRING(255),
+            unique: true,
+            allowNull: false
+        },
         password: DataTypes.STRING(255),
-        active: DataTypes.BOOLEAN,
+        active: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: true
+        },
     }, baseModel().options);
 };
 

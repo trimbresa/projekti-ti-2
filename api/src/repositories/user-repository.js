@@ -1,14 +1,28 @@
 const BaseRepository = require("./base-repository");
+const uuid = require('uuid').v4;
 
 class UserRepository extends BaseRepository {
-    async createUser() {
+    async createUser(newUser) {
+        const {firstName = '', lastName = '', email, password} = newUser;
+        console.log(email);
         const repository = await this.getRepository();
-        const {user, address, customer} = repository.models;
+        const {user} = repository.models;
 
-        const createdUser = await user.create({id: 1, firstName: 'Trim', lastName: 'Bresa'});
-        await customer.create({id: 3, userId: createdUser.id});
+        const createdUser = await user.create({id: uuid(), firstName, lastName, email, password});
 
-        return "aasdas";
+        return createdUser;
+    }
+
+    async getUser(email) {
+        const repository = await this.getRepository();
+        const {user} = repository.models;
+
+        const foundUser = await user.findOne({
+            where: {
+                email
+            }
+        });
+        return foundUser;
     }
 
     async updateUser() {

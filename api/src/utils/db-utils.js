@@ -8,7 +8,7 @@ const dbConnection = () => new Sequelize(dbConfig.DB_NAME, dbConfig.DB_USERNAME,
 });
 
 const applyAssociations = (sequelize) => {
-    const { user, customer, address, restaurant } = sequelize.models;
+    const { user, customer, address, restaurant, menu, menuItems, item } = sequelize.models;
 
     // user to customer relations
     user.hasOne(customer, { foreignKey: { allowNull: false }});
@@ -25,6 +25,16 @@ const applyAssociations = (sequelize) => {
     // user to restaurant relations
     user.hasOne(restaurant)
     restaurant.belongsTo(user)
+
+    menu.belongsTo(restaurant)
+    restaurant.hasOne(menu)
+
+    menu.hasMany(menuItems)
+    menuItems.belongsTo(menu)
+
+    item.belongsTo(menuItems)
+    menuItems.hasOne(item)
+
 
     console.log('created associations')
 }

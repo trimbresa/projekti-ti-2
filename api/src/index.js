@@ -1,9 +1,11 @@
 const express = require('express');
 const app = express();
+const cors = require('cors')
 
 const { PORT } = require('./config/constants');
 const routes = require('./routes');
 const {dbConnection} = require("./utils/db-utils");
+const protectedRoute = require("./middlewares/protected-route");
 
 async function assertDatabaseConnectionOk() {
   console.log(`Checking database connection...`);
@@ -23,4 +25,6 @@ app.listen(PORT, async () => {
   console.log('initializing DB tables...');
 })
 
+app.use(cors())
+app.use(express.json());
 app.use('/', routes)

@@ -9,9 +9,9 @@ const Address = (sequelize) => {
             primaryKey: true,
         },
         country: DataTypes.STRING(255),
-        name: DataTypes.STRING(255),
-        description: DataTypes.STRING(255),
-        price: DataTypes.DOUBLE,
+        city: DataTypes.STRING(255),
+        location: DataTypes.STRING(100),
+        zipCode: DataTypes.STRING(30),
     }, baseModel().options);
 };
 

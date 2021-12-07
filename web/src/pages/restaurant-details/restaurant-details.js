@@ -2,31 +2,33 @@ import React, {useEffect, useState} from 'react';
 import Navbar from "../../components/navbar/navbar";
 import {Col, Container, Row} from "react-bootstrap";
 
-import restaurants from '../home/restaurants.json';
 import {useNavigate, useParams} from "react-router-dom";
 
-import './restaurant-details-styles.scss';
 import RestaurantHeader from "../../components/headers/restaurant-header/restaurant-header";
 import MenuList from "../../components/lists/menu-list/menu-list";
 import MenuListItem from "../../components/list-items/menu-list-item/menu-list-item";
 
-const RestaurantDetails = () => {
+import restaurantService from "../../services/restaurant-service";
 
+import './restaurant-details-styles.scss';
+
+const RestaurantDetails = () => {
     const {restaurant_id} = useParams();
     const navigate = useNavigate();
     const [restaurant, setRestaurant] = useState(null);
 
-
     useEffect(() => {
-        const foundItem = restaurants.find(item => item.id === parseInt(restaurant_id));
+        fetchRestaurant();
+    }, [navigate, restaurant_id])
+
+    const fetchRestaurant = async () => {
+        const foundItem = await restaurantService.getRestaurant(restaurant_id);
         if (!foundItem) {
             navigate("/not-found");
         }
-        document.title = `${foundItem.name} - eFood`;
+        document.title = `${foundItem.restaurantName || 'Untitled'} - eFood`;
         setRestaurant(foundItem)
-    }, [navigate, restaurant_id])
-
-    // const foundItem = restaurants.find(item => item.id === props)
+    }
 
     return (
         <>
@@ -49,7 +51,7 @@ const RestaurantDetails = () => {
                                     <MenuListItem
                                         key={index}
                                         title={`Item ${index}`}
-                                        description="Food item good taste"
+                                        description="Food item"
                                         price="$4.00"
                                     />
                                 ))}
