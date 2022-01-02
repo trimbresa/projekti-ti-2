@@ -1,8 +1,10 @@
+const { DB_HOST, DB_NAME, DB_USER, DB_PASSWORD } = require("./constants")
+
 const dbConfig = {
-    DB_HOST: 'localhost',
-    DB_NAME: 'eFood',
-    DB_USERNAME: 'trimbresa',
-    DB_PASSWORD: '',
+    DB_HOST: DB_HOST,
+    DB_NAME: DB_NAME,
+    DB_USER: DB_USER,
+    DB_PASSWORD: DB_PASSWORD,
 }
 
 module.exports = {

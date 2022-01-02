@@ -1,8 +1,9 @@
-const {initDbTables} = require("./src/utils/db-utils");
+require('dotenv').config();
+const {initDbConnection} = require("./src/utils/db-utils");
 
 const initDb = async () => {
     try {
-        await initDbTables();
+        await initDbConnection();
     } catch(error) {
         console.log(error);
         console.log("Failed to init DB.");

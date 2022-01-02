@@ -18,17 +18,17 @@ const RestaurantDetails = () => {
     const [restaurant, setRestaurant] = useState(null);
 
     useEffect(() => {
+        const fetchRestaurant = async () => {
+            const foundItem = await restaurantService.getRestaurant(restaurant_id);
+            if (!foundItem) {
+                navigate("/not-found");
+            }
+            document.title = `${foundItem.restaurantName || 'Untitled'} - eFood`;
+            setRestaurant(foundItem)
+        }
+        
         fetchRestaurant();
     }, [navigate, restaurant_id])
-
-    const fetchRestaurant = async () => {
-        const foundItem = await restaurantService.getRestaurant(restaurant_id);
-        if (!foundItem) {
-            navigate("/not-found");
-        }
-        document.title = `${foundItem.restaurantName || 'Untitled'} - eFood`;
-        setRestaurant(foundItem)
-    }
 
     return (
         <>

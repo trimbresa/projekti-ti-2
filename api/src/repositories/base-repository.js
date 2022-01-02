@@ -1,6 +1,6 @@
 const { Sequelize } = require('sequelize');
 const { dbConfig } = require('../config/config');
-const {dbConnection, initDbConnection} = require("../utils/db-utils");
+const { dbConnection, initDbConnection } = require("../utils/db-utils");
 
 class BaseRepository {
     entity = null;
@@ -11,15 +11,10 @@ class BaseRepository {
     }
 
     async setDbConnection() {
-        if(!this.dbConnection) {
+        if (!this.dbConnection) {
             this.dbConnection = await initDbConnection();
         }
     }
-
-    // async closeConnection() {
-    //     await this.dbConnection.close();
-    //     this.dbConnection = null;
-    // }
 
     async getRepository() {
         return await initDbConnection();

@@ -1,8 +1,8 @@
-const {Sequelize, DataTypes} = require("sequelize");
+const {Sequelize, DataTypes, sequelize} = require("sequelize");
 const {dbConfig} = require("../config/config");
 const Models = require("../models");
 
-const dbConnection = () => new Sequelize(dbConfig.DB_NAME, dbConfig.DB_USERNAME, dbConfig.DB_PASSWORD, {
+const dbConnection = () => new Sequelize(dbConfig.DB_NAME, dbConfig.DB_USER, dbConfig.DB_PASSWORD, {
     host: dbConfig.DB_HOST,
     dialect: 'postgres'
 });
@@ -35,7 +35,6 @@ const applyAssociations = (sequelize) => {
     item.belongsTo(menuItems)
     menuItems.hasOne(item)
 
-
     console.log('created associations')
 }
 
@@ -56,5 +55,5 @@ const initDbConnection = async () => {
 module.exports = {
     dbConnection,
     initDbConnection,
-    applyAssociations
+    applyAssociations,
 }

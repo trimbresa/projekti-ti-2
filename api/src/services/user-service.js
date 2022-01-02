@@ -43,7 +43,7 @@ class UserService {
 
         const createdUser = await userRepository.createUser(userData);
         await restaurantRepository.createRestaurant(createdUser.id, userData);
-
+        
         const token = await createJwtToken({ id: createdUser.id, email: createdUser.email });
 
         return await res.json({ token });

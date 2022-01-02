@@ -1,9 +1,6 @@
 import React, {useEffect} from 'react';
-import {Button, Col, Container, Row, Form, Card} from "react-bootstrap";
+import {Container, Row, Col} from "react-bootstrap";
 import Navbar from "../../components/navbar/navbar";
-import userService from "../../services/user-service";
-import appContext from "../../context/app-context";
-import useApp from "../../hooks/use-app";
 import RestaurantProfile from "./restaurant-profile/restaurant-profile";
 import CustomerProfile from "./customer-profile/customer-profile";
 

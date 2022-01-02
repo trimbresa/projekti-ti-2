@@ -1,5 +1,5 @@
 import React from 'react'
-import {Button, Col, Container, Nav, Row} from "react-bootstrap";
+import {Col, Container, Nav, Row} from "react-bootstrap";
 import Navbar from "../../../components/navbar/navbar";
 import {NavLink, Outlet} from "react-router-dom";
 

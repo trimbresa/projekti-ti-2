@@ -20,6 +20,7 @@ router.post("/register/restaurant", async (req, res) => {
     const registeredRestaurant = await userService.registerRestaurant(req, res);
     return registeredRestaurant;
   } catch(error) {
+    console.log('(AuthRoutes.register/restaurant) - Error:', error.message);
     res.status(502).json({ message: '502, failed to create restaurant!' });
   }
 })
