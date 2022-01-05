@@ -17,7 +17,8 @@ class BaseRepository {
     }
 
     async getRepository() {
-        return await initDbConnection();
+        await this.setDbConnection();
+        return this.dbConnection;
     }
 }
 

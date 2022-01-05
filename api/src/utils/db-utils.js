@@ -4,7 +4,8 @@ const Models = require("../models");
 
 const dbConnection = () => new Sequelize(dbConfig.DB_NAME, dbConfig.DB_USER, dbConfig.DB_PASSWORD, {
     host: dbConfig.DB_HOST,
-    dialect: 'postgres'
+    dialect: 'postgres',
+    logging: false
 });
 
 const applyAssociations = (sequelize) => {
@@ -26,14 +27,26 @@ const applyAssociations = (sequelize) => {
     user.hasOne(restaurant)
     restaurant.belongsTo(user)
 
-    menu.belongsTo(restaurant)
-    restaurant.hasOne(menu)
+    menu.belongsTo(restaurant, {
+        foreignKey: {
+            allowNull: false
+        }
+    })
+    restaurant.hasMany(menu)
 
     menu.hasMany(menuItems)
-    menuItems.belongsTo(menu)
+    menuItems.belongsTo(menu, {
+        foreignKey: {
+            allowNull: false
+        },
+    })
 
-    item.belongsTo(menuItems)
-    menuItems.hasOne(item)
+    item.hasMany(menuItems)
+    menuItems.belongsTo(item, {
+        foreignKey: {
+            allowNull: false
+        }
+    })
 
     console.log('created associations')
 }

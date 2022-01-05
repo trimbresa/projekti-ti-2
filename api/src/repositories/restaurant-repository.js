@@ -17,20 +17,23 @@ class UserRepository extends BaseRepository {
         const allRestaurants = await restaurant.findAll({
             attributes: ['restaurantName', 'id', 'pictureUrl']
         });
-        console.log(allRestaurants);
 
         return allRestaurants;
     }
 
     async getOne(id) {
         const repository = await this.getRepository();
-        const {restaurant} = repository.models;
+        const {restaurant, menu} = repository.models;
 
         const foundItem = await restaurant.findOne({
             where: {
                 id
             },
-            attributes: ['restaurantName', 'id', 'pictureUrl']
+            attributes: ['restaurantName', 'id', 'pictureUrl'],
+            include: {
+                model: menu,
+                attributes: ['id', 'name']
+            }
         });
 
         return foundItem;
@@ -56,7 +59,6 @@ class UserRepository extends BaseRepository {
 
     async updateRestaurant(newData) {
         const repository = await this.getRepository();
-        console.log('newdt: ', {newData})
         const {restaurant} = repository.models;
         const updatedRestaurant = await restaurant.update(
                 newData,

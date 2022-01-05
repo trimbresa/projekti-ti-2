@@ -7,7 +7,8 @@ router.get("/restaurants", async (req, res) => {
     try {
         return await restaurantService.fetchRestaurants(req, res);
     } catch (error) {
-        res.json({ message: 'Server error' });
+        console.log(error.message)
+        res.status(502).json({ message: 'Server error' });
     }
 })
 
@@ -15,7 +16,8 @@ router.get("/restaurants/:id", async (req, res) => {
     try {
         return await restaurantService.getRestaurant(req, res);
     } catch (error) {
-        res.json({ message: 'Server error' });
+        console.log(error.message)
+        res.status(502).json({ message: 'Server error' });
     }
 })
 

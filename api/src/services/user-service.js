@@ -70,10 +70,7 @@ class UserService {
         const foundUser = await userRepository.getUser(tokenData.email);
         const foundRestaurant = await restaurantRepository.getByUserId(foundUser.id);
 
-        console.log('HERE: ', { dt: req.body });
-
         if(foundRestaurant) {
-            console.log('FOUNDUSER: ', foundRestaurant.id);
             const updatedRestaurant = await restaurantRepository.updateRestaurant(req.body);
             return res.json({ data: updatedRestaurant })
         }
