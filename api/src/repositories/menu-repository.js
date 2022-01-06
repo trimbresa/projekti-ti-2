@@ -7,7 +7,9 @@ class MenuRepository extends BaseRepository {
         const { menu } = repository.models;
 
         const allMenus = await menu.findAll({
-            attributes: ['id']
+            attributes: [
+                'id',
+            ],
         });
 
         return allMenus;
@@ -15,21 +17,21 @@ class MenuRepository extends BaseRepository {
 
     async getMenu(id) {
         const repository = await this.getRepository();
-        const { menu, item } = repository.models;
+        const { menu, menuItems, item } = repository.models;
 
         const foundMenu = await menu.findOne({
             attributes: ['id', 'name'],
             where: {
                 id
             },
-            include: {
+            include: [{
                 model: menuItems,
-                attributes: ['id', 'itemId'],
+                attributes: ['id'],
                 include: {
                     model: item,
-                    attributes: ['name']
+                    attributes: ['name', 'price', 'description', 'category']
                 }
-            }
+            }]
         });
         return foundMenu;
     }
@@ -63,6 +65,20 @@ class MenuRepository extends BaseRepository {
         const { restaurantId, name } = menuData;
 
         return await menu.create({ id: uuid(), name, restaurantId });
+    }
+
+    async deleteMenu(menuId) {
+        const repository = await this.getRepository();
+        const { menu } = repository.models;
+
+        await menu.destroy({
+            where: {
+                id: menuId
+            },
+            cascade: true
+        });
+
+        return true;
     }
 }
 

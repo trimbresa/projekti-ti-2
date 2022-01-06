@@ -17,15 +17,21 @@ class MenuService {
         const menuData = req.body;
         const createdMenu = await menuRepository.createMenu(menuData);
         await menuItemsService.createMenuItems(menuData.menuItems, createdMenu.id);
-        // const fetchedMenu = await menuRepository.getMenu(createdMenu.id);
+        const fetchedMenu = await menuRepository.getMenu(createdMenu.id);
 
-        return res.json({ data: {} });
+        return res.json({ data: fetchedMenu });
     }
 
     async fetchRestaurantMenus(req, res) {
         const { restaurant_id } = req.params;
         const fetchedMenus = await menuRepository.fetchRestaurantMenus(restaurant_id);
         return res.json({ data: fetchedMenus });
+    }
+
+    async deleteMenu(req, res) {
+        const { menuId } = req.body;
+        await menuRepository.deleteMenu(menuId);
+        return res.json({ data: true });
     }
 }
 

@@ -13,17 +13,17 @@ import restaurantService from "../../services/restaurant-service";
 import './restaurant-details-styles.scss';
 import menuService from '../../services/menu-service';
 import MenuDetailsModal from '../../components/modals/menu-details-modal/menu-details-modal';
+import ConfirmationDialog from '../../components/modals/confirmation-dialog/confirmation-dialog';
 
 const RestaurantDetails = () => {
     const { restaurant_id } = useParams();
     const navigate = useNavigate();
     const [restaurant, setRestaurant] = useState(null);
     const [menus, setMenus] = useState([]);
-    const [modalVisible, setModalVisible] = useState(false);
     const [selectedMenu, setSelectedMenu] = useState(null);
+    const [deleteMenu, setDeleteMenu] = useState(null);
 
     const onModalHide = () => {
-        setModalVisible(false)
         setSelectedMenu(null);
     }
 
@@ -31,8 +31,37 @@ const RestaurantDetails = () => {
         setSelectedMenu(selected);
     }
 
+    const onDelete = async (menu) => {
+        setDeleteMenu(menu);
+    }
+
     const onAddNew = () => {
-        setSelectedMenu({});
+        setSelectedMenu({
+            name: '',
+            menuItems: []
+        });
+    }
+
+    const onSubmit = async (data) => {
+        try {
+            const createdMenu = await menuService.createMenu({ ...data, restaurantId: restaurant_id });
+            setMenus([...menus, createdMenu]);
+            setSelectedMenu(null);
+        } catch (error) {
+            console.log(error.message);
+        }
+    }
+
+    const onDeleteConfirm = async () => {
+        try {
+            await menuService.deleteMenu({ menuId: deleteMenu.id });
+            let updatedMenus = menus.filter(item => item.id !== deleteMenu.id);
+            setMenus(updatedMenus);
+            setDeleteMenu(null);
+        } catch (error) {
+            console.log('(RestaurantDetails.onDelete) - Error: ', error.message);
+            alert('Failed to delete menu!')
+        }
     }
 
     useEffect(() => {
@@ -86,11 +115,11 @@ const RestaurantDetails = () => {
                                 </Col>
                                 <Col className='d-flex justify-content-end'>
                                     <Button variant="secondary" className='edit-btn' onClick={() => onEdit(menu)}>Edit</Button>
-                                    <Button variant="danger">Delete</Button>
+                                    <Button variant="danger" onClick={() => onDelete(menu)}>Delete</Button>
                                 </Col>
                             </Row>
                             <MenuList>
-                                {menu.menuItems.map(menuItem => (
+                                {menu?.menuItems?.map(menuItem => (
                                     <MenuListItem
                                         key={menuItem.id}
                                         title={menuItem.item.name}
@@ -103,7 +132,8 @@ const RestaurantDetails = () => {
                     </Row>)}
                 </Container>
             </Container>
-            <MenuDetailsModal show={selectedMenu && true} menu={selectedMenu} onHide={onModalHide} />
+            <MenuDetailsModal show={selectedMenu && true} menu={selectedMenu} onHide={onModalHide} onSubmit={onSubmit} />
+            <ConfirmationDialog show={deleteMenu} onHide={setDeleteMenu} title='Warning' message='Are you sure you want to delete this menu?' onConfirm={onDeleteConfirm} />
         </>
     );
 }

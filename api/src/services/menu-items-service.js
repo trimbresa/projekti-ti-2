@@ -3,8 +3,8 @@ const itemService = require('./item-service');
 
 class MenuItemsService {
     async createMenuItems(menuItems, menuId) {
-        for(const item of menuItems) {
-            const createdItem = await itemService.createItem(item);
+        for(const menuItem of menuItems) {
+            const createdItem = await itemService.createItem(menuItem.item);
             const menuData = {itemId: createdItem.id, menuId}
             await menuItemsRepository.createMenuItems(menuData);
         }
