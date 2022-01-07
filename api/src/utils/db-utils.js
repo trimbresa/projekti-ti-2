@@ -34,18 +34,20 @@ const applyAssociations = (sequelize) => {
     })
     restaurant.hasMany(menu)
 
-    menu.hasMany(menuItems)
+    menu.hasMany(menuItems, { onDelete: 'CASCADE' })
     menuItems.belongsTo(menu, {
         foreignKey: {
             allowNull: false
         },
+        onDelete: 'CASCADE'
     })
 
-    item.hasMany(menuItems)
+    item.hasMany(menuItems, { onDelete: 'CASCADE' })
     menuItems.belongsTo(item, {
         foreignKey: {
             allowNull: false
-        }
+        },
+        onDelete: 'CASCADE'
     })
 
     console.log('created associations')

@@ -4,11 +4,15 @@ import { Button, Col, Container, Row } from "react-bootstrap";
 
 import { useNavigate, useParams } from "react-router-dom";
 
+import { updateItemInArray } from '../../utils/utils';
+
 import RestaurantHeader from "../../components/headers/restaurant-header/restaurant-header";
 import MenuList from "../../components/lists/menu-list/menu-list";
 import MenuListItem from "../../components/list-items/menu-list-item/menu-list-item";
 
 import restaurantService from "../../services/restaurant-service";
+
+import useAppContext from '../../hooks/use-app';
 
 import './restaurant-details-styles.scss';
 import menuService from '../../services/menu-service';
@@ -18,6 +22,7 @@ import ConfirmationDialog from '../../components/modals/confirmation-dialog/conf
 const RestaurantDetails = () => {
     const { restaurant_id } = useParams();
     const navigate = useNavigate();
+    const { isAuthed } = useAppContext();
     const [restaurant, setRestaurant] = useState(null);
     const [menus, setMenus] = useState([]);
     const [selectedMenu, setSelectedMenu] = useState(null);
@@ -44,11 +49,20 @@ const RestaurantDetails = () => {
 
     const onSubmit = async (data) => {
         try {
-            const createdMenu = await menuService.createMenu({ ...data, restaurantId: restaurant_id });
-            setMenus([...menus, createdMenu]);
+            const menuItem = { ...data, restaurantId: restaurant_id };
+            if (data?.id) {
+                const updatedMenu = await menuService.updateMenu(menuItem);
+                const updatedMenus = updateItemInArray(menus, updatedMenu, 'id');
+                setMenus(updatedMenus);
+            } else {
+                const createdMenu = await menuService.createMenu(menuItem);
+                setMenus([...menus, createdMenu]);
+            }
+
             setSelectedMenu(null);
         } catch (error) {
             console.log(error.message);
+            alert('Failed to submit menu!');
         }
     }
 
@@ -96,27 +110,27 @@ const RestaurantDetails = () => {
                 <RestaurantHeader restaurant={restaurant} />
                 <Container className='mb-5'>
                     <Row className="py-4 mb-3">
-                        <Col md={5}>
+                        <Col md={6}>
                             <Row>
                                 <Col>
                                     <h4>Menu</h4>
                                 </Col>
-                                <Col className='d-flex justify-content-end'>
+                                {isAuthed && <Col className='d-flex justify-content-end'>
                                     <Button variant="success" onClick={onAddNew}>+ Add New</Button>
-                                </Col>
+                                </Col>}
                             </Row>
                         </Col>
                     </Row>
                     {menus.map(menu => <Row key={menu.id} className='mb-5'>
-                        <Col md={5}>
+                        <Col md={6}>
                             <Row className='align-items-center py-3 justify-space-between'>
                                 <Col>
                                     <h5>{menu.name}</h5>
                                 </Col>
-                                <Col className='d-flex justify-content-end'>
+                                {isAuthed && <Col className='d-flex justify-content-end'>
                                     <Button variant="secondary" className='edit-btn' onClick={() => onEdit(menu)}>Edit</Button>
                                     <Button variant="danger" onClick={() => onDelete(menu)}>Delete</Button>
-                                </Col>
+                                </Col>}
                             </Row>
                             <MenuList>
                                 {menu?.menuItems?.map(menuItem => (

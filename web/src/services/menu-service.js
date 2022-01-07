@@ -6,7 +6,11 @@ class MenuService extends BaseService {
     }
 
     async createMenu(newMenu) {
-        return (await this.apiPost('/menu', newMenu))?.data || [];
+        return (await this.apiPost('/menu', newMenu))?.data || null;
+    }
+
+    async updateMenu(updatedMenu) {
+        return (await this.apiPatch('/menu', updatedMenu))?.data || null;
     }
 
     async deleteMenu(newMenu) {

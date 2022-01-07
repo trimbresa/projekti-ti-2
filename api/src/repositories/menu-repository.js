@@ -67,6 +67,33 @@ class MenuRepository extends BaseRepository {
         return await menu.create({ id: uuid(), name, restaurantId });
     }
 
+    async updateMenu(menuData) {
+        const repository = await this.getRepository();
+        const { menu, menuItems, item } = repository.models;
+        const { name, id } = menuData;
+
+        await menu.update({ name }, {
+            where: {
+                id
+            }
+        });
+
+        return await menu.findOne({
+            attributes: ['id', 'name'],
+            where: {
+                id
+            },
+            include: [{
+                model: menuItems,
+                attributes: ['id'],
+                include: {
+                    model: item,
+                    attributes: ['name', 'price', 'description', 'category']
+                }
+            }]
+        });
+    }
+
     async deleteMenu(menuId) {
         const repository = await this.getRepository();
         const { menu } = repository.models;

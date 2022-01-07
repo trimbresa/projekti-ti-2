@@ -9,6 +9,22 @@ class MenuItemsService {
             await menuItemsRepository.createMenuItems(menuData);
         }
     }
+
+    async updateMenuItems(menuItems, menuId) {
+        for(const menuItem of menuItems) {
+            const createdItem = await itemService.updateItem(menuItem.item);
+            const menuData = {itemId: createdItem.id, menuId}
+            await menuItemsRepository.updateMenuItems(menuData);
+        }
+    }
+
+    async deleteMenuItems(menuItems, menuId) {
+        for(const menuItem of menuItems) {
+            const createdItem = await itemService.updateItem(menuItem.item);
+            const menuData = {itemId: createdItem.id, menuId}
+            await menuItemsRepository.updateMenuItems(menuData);
+        }
+    }
 }
 
 module.exports = new MenuItemsService();

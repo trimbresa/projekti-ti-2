@@ -29,11 +29,20 @@ router.post("/menu", async (req, res) => {
   }
 })
 
+router.patch("/menu", async (req, res) => {
+  try {
+    return await menuService.updateMenu(req, res);
+  } catch (error) {
+    console.log('(MenuRoutes/menu) - Patch:', error.message);
+    res.status(502).json({ message: 'Server error' });
+  }
+})
+
 router.delete("/menu", async (req, res) => {
   try {
     return await menuService.deleteMenu(req, res);
   } catch (error) {
-    console.log('(MenuRoutes/menu) - Post:', error.message);
+    console.log('(MenuRoutes/menu) - Delete:', error.message);
     res.status(502).json({ message: 'Server error' });
   }
 })

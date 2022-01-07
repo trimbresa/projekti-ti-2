@@ -1,4 +1,4 @@
-import {Button, Card} from "react-bootstrap";
+import {Card} from "react-bootstrap";
 import {Link} from "react-router-dom";
 import React from "react";
 import useLocalization from '../../../hooks/use-localization';
@@ -10,7 +10,7 @@ export default function RestaurantCard({ restaurant }) {
     const {locale} = useLocalization();
     const { restaurantCard } = locale.components;
 
-    return <Card>
+    return <Card as={Link} to={`/${id}`} className="restaurant-card-link text-dark">
         <Card.Img
             variant="top"
             src={pictureUrl}
@@ -18,7 +18,6 @@ export default function RestaurantCard({ restaurant }) {
         />
         <Card.Body>
             <Card.Title>{restaurantName || 'Untitled'}</Card.Title>
-            <Button variant="primary" as={Link} to={`/${id}`}>{restaurantCard.viewMore}</Button>
         </Card.Body>
     </Card>
 }

@@ -1,7 +1,11 @@
 import React from 'react';
-import {Badge, ListGroup} from "react-bootstrap";
+import {Badge, Button, ListGroup} from "react-bootstrap";
 
-const MenuListItem = ({title, price, description}) => {
+const MenuListItem = ({title, price, description, onDelete, showDeleteAction, itemIndex}) => {
+    const onMenuItemDelete = () => {
+        onDelete(itemIndex)
+    }
+
     return (
         <ListGroup.Item
             as="li"
@@ -14,6 +18,7 @@ const MenuListItem = ({title, price, description}) => {
             <Badge variant="primary" bg="success" pill>
                 {price}
             </Badge>
+            {showDeleteAction && <Button onClick={onMenuItemDelete}>Delete</Button>}
         </ListGroup.Item>
     );
 }

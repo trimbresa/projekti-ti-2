@@ -11,10 +11,10 @@ const initialValues = {
 };
 
 const validationSchema = Yup.object().shape({
-  itemName: Yup.string().trim().min(3, 'Too Short!').required('Required'),
-  itemDescription: Yup.string().trim().min(5, 'Too Short!').required('Required'),
+  itemName: Yup.string().trim().min(3, 'Too Short!').max(255, 'Too long!').required('Required'),
+  itemDescription: Yup.string().trim().min(5, 'Too Short!').max(255, 'Too long!').required('Required'),
   itemPrice: Yup.number().min(0, 'Invalid').required('Required'),
-  itemCategory: Yup.string().trim(),
+  itemCategory: Yup.string().max(255, 'Too long!').trim(),
 });
 
 export default function MenuItemsForm(props) {
@@ -30,7 +30,7 @@ export default function MenuItemsForm(props) {
   const { values, handleSubmit, handleChange, errors, touched } = formik;
 
   return <div>
-    <Card className='mt-3 mb-1'>
+    <Card className='mt-3 mb-2'>
       <Card.Body>
         <h6 className='mb-3'>New menu item</h6>
         <form onSubmit={handleSubmit}>
@@ -58,9 +58,9 @@ export default function MenuItemsForm(props) {
           </Row>
           <Row>
             <Col>
-              <Form.Group className="mb-1">
+              <Form.Group>
                 <Form.Control placeholder="Category" size='sm' name='itemCategory' value={values.itemCategory} onChange={handleChange} />
-                <label className='text-danger'>{errors.itemCategory && touched.itemCategory && errors.itemCategory}</label>
+                <label className='text-danger text-sm'>{errors.itemCategory && touched.itemCategory && errors.itemCategory}</label>
               </Form.Group>
             </Col>
           </Row>
@@ -68,6 +68,7 @@ export default function MenuItemsForm(props) {
       </Card.Body>
     </Card>
     <Col>
-      <Button className='mt-2 mb-3 col-12' onClick={handleSubmit} variant='success'>+ Add item</Button></Col>
+      <Button className='mt-2 mb-3 col-12' onClick={handleSubmit} variant='success'>+ Add item</Button>
+    </Col>
   </div>
 }

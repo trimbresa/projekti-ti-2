@@ -1,3 +1,4 @@
+const menuItemsRepository = require('../repositories/menu-items-repository');
 const menuRepository = require('../repositories/menu-repository');
 const menuItemsService = require('./menu-items-service');
 
@@ -18,6 +19,37 @@ class MenuService {
         const createdMenu = await menuRepository.createMenu(menuData);
         await menuItemsService.createMenuItems(menuData.menuItems, createdMenu.id);
         const fetchedMenu = await menuRepository.getMenu(createdMenu.id);
+
+        return res.json({ data: fetchedMenu });
+    }
+
+    async updateMenu(req, res) {
+        const menuData = req.body;
+        const updatedMenu = await menuRepository.updateMenu(menuData);
+        const fetchedMenuItems = await menuItemsRepository.fetchMenuItems(updatedMenu.id);
+
+        if (fetchedMenuItems.length === 0) {
+            await menuItemsService.createMenuItems(menuData.menuItems, updatedMenu.id);
+            const fetchedMenu = await menuRepository.getMenu(updatedMenu.id);
+
+            return res.json({ data: fetchedMenu });
+        }
+
+        for (const existingMenuItem of fetchedMenuItems) {
+            console.log(existingMenuItem.id)
+            const matchedItem = menuData.menuItems.find(item => item?.id === existingMenuItem.id);
+            if (!matchedItem) {
+                await menuItemsRepository.deleteMenuItem(existingMenuItem);
+                console.log('deleting menu item: ', existingMenuItem)
+            } else if (matchedItem) {
+                // await menuItemsRepository.updateItem(existingMenuItem.id);
+            }
+            // if(menuData.menuItems.find(item => item?.id !== existingMenuItem.id)) {
+            //     await menuItemsRepository.deleteMenuItem(existingMenuItem.id);
+            // }
+        }
+        await menuItemsService.createMenuItems(menuData.menuItems, updatedMenu.id);
+        const fetchedMenu = await menuRepository.getMenu(updatedMenu.id);
 
         return res.json({ data: fetchedMenu });
     }
