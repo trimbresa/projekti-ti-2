@@ -19,6 +19,22 @@ class RestaurantService {
 
         return res.json({ data: fetchedRestaurant });
     }
+
+    async getProfile(req, res) {
+        const dataFromToken = await verifyJwtToken(req?.headers?.token ?? '');
+        console.log(dataFromToken.id)
+        const foundUser = await userRepository.getUser(dataFromToken.email);
+        const foundRestaurant = await restaurantRepository.getByUserId(foundUser.id);
+        if(foundRestaurant) {
+            return res.json({ data: foundRestaurant })
+        }
+        // TODO
+        // const foundCustomer = await customerRepository.getOne(dataFromToken.id);
+        // if(foundRestaurant) {
+        //     return res.json({ data: foundRestaurant })
+        // }
+        return res.status(404).json({ message: "Not found." });
+    }
 }
 
 module.exports = new RestaurantService();

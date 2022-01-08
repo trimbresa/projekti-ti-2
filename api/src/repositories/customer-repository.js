@@ -1,14 +1,11 @@
 const BaseRepository = require("./base-repository");
+const uuid = require('uuid').v4;
 
 class CustomerRepository extends BaseRepository {
-    async createCustomer() {
+    async createCustomer(userId) {
         const repository = await this.getRepository();
-        const {user} = repository.models;
-
-        const createdUser = await user.create({id: 1, firstName: 'Trim', lastName: 'Bresa'});
-        await customer.create({id: 3, userId: createdUser.id});
-
-        return "aasdas";
+        const {customer} = repository.models;
+        return await customer.create({id: uuid(), userId});
     }
 
     async updateUser() {
@@ -18,6 +15,24 @@ class CustomerRepository extends BaseRepository {
 
         // console.log(User);
         return 'welcome';
+    }
+
+    async getOne(id) {
+        const repository = await this.getRepository();
+        const {user, customer} = repository.models;
+
+        const foundItem = await user.findOne({
+            where: {
+                id
+            },
+            attributes: ['firstName', 'lastName', 'dob', 'email'],
+            include: {
+                model: customer,
+                attributes: ['avatarUrl']
+            }
+        });
+
+        return foundItem;
     }
 }
 

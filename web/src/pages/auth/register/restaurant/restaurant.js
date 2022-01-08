@@ -1,8 +1,8 @@
 import React, {useState} from 'react'
-import {Link, useNavigate} from 'react-router-dom'
-import {Button, Col, Form} from "react-bootstrap";
+import {Button, Form} from "react-bootstrap";
 import useApp from "../../../../hooks/use-app";
 import authService from "../../../../services/auth-service";
+import useLocalization from '../../../../hooks/use-localization';
 
 export default function Restaurant() {
     const [restaurantName, setRestaurantName] = useState('');
@@ -11,8 +11,10 @@ export default function Restaurant() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const navigation = useNavigate();
     const appContext = useApp();
+
+    const { locale } = useLocalization();
+    const registerLocale = locale["register"];
 
     const onSubmit = async (event) => {
         event.preventDefault();
@@ -36,7 +38,7 @@ export default function Restaurant() {
 
             localStorage.setItem('token', response.token);
             appContext.setIsAuthed(true);
-            navigation('/', { replace: true });
+            document.location.href = '/';
         } catch (error) {
             setError('Failed to register')
         } finally {
@@ -47,52 +49,46 @@ export default function Restaurant() {
     return (
         <Form onSubmit={onSubmit}>
             <Form.Group className="mb-3">
-                <Form.Label>Restaurant name</Form.Label>
+                <Form.Label>{registerLocale.restaurantInputs.restaurantName.label}</Form.Label>
                 <Form.Control
                     type="text"
-                    placeholder="Restaurant name"
+                    placeholder={registerLocale.restaurantInputs.restaurantName.placeholder}
                     value={restaurantName}
                     onChange={(event) => setRestaurantName(event.target.value)}
                     aria-required={true}
                 />
             </Form.Group>
             <Form.Group className="mb-3">
-                <Form.Label>Picture URL</Form.Label>
+                <Form.Label>{registerLocale.restaurantInputs.pictureUrl.label}</Form.Label>
                 <Form.Control
                     type="text"
-                    placeholder="Picture URL"
+                    placeholder={registerLocale.restaurantInputs.pictureUrl.placeholder}
                     value={pictureUrl}
                     onChange={(event) => setPictureUrl(event.target.value)}
                 />
             </Form.Group>
             <Form.Group className="mb-3">
-                <Form.Label>Email address</Form.Label>
+                <Form.Label>{registerLocale.restaurantInputs.email.label}</Form.Label>
                 <Form.Control
                     type="email"
-                    placeholder="Enter email"
+                    placeholder={registerLocale.restaurantInputs.email.placeholder}
                     value={email}
                     onChange={(event) => setEmail(event.target.value)}
                 />
-                <Form.Text className="text-muted">
-                    We'll never share your email with anyone else.
-                </Form.Text>
             </Form.Group>
             <Form.Group className="mb-3">
-                <Form.Label>Password</Form.Label>
+                <Form.Label>{registerLocale.restaurantInputs.password.label}</Form.Label>
                 <Form.Control
                     type="password"
-                    placeholder="Password"
+                    placeholder={registerLocale.restaurantInputs.password.placeholder}
                     value={password}
                     onChange={(event) => setPassword(event.target.value)}
                 />
             </Form.Group>
             <h4 className='text-danger'>{error}</h4>
             <Button variant="primary" type="submit" disabled={isSubmitting} >
-                {isSubmitting ? 'Submitting...' : 'Submit'}
+                {isSubmitting ? registerLocale.restaurantInputs.submitting : registerLocale.restaurantInputs.submit}
             </Button>
-            <Col className="p-0 mt-5 text-center">
-                Already have an account? <Link to="/login">Login</Link>
-            </Col>
         </Form>
     )
 }

@@ -12,6 +12,7 @@ router.get("/profile", protectedRoute, async (req, res) => {
   try {
     return await userService.getProfile(req, res);
   } catch (error) {
+    console.log('(UserRoutes/profile.get) - Error: ', error.message);
     res.status(502).json({ message: 'Server error' });
   }
 })
@@ -20,6 +21,7 @@ router.patch("/profile", protectedRoute, async (req, res) => {
   try {
     return await userService.updateProfile(req, res);
   } catch (error) {
+    console.log('(UserRoutes/profile.patch) - Error: ', error.message);
     res.status(502).json({ message: 'Server error' });
   }
 })

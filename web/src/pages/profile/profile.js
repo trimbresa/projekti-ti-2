@@ -3,8 +3,10 @@ import { Container, Row, Col } from "react-bootstrap";
 import Navbar from "../../components/navbar/navbar";
 import RestaurantProfile from "./restaurant-profile/restaurant-profile";
 import CustomerProfile from "./customer-profile/customer-profile";
+import useApp from '../../hooks/use-app';
 
 const Profile = () => {
+    const { profile } = useApp();
     useEffect(() => {
         document.title = 'Profile - eFood'
     }, [])
@@ -20,11 +22,11 @@ const Profile = () => {
                                 <CustomerProfile />
                             </Col>
                         </Row>
-                        <Row>
+                        {"restaurantName" in profile && <Row>
                             <Col lg={6}>
                                 <RestaurantProfile />
                             </Col>
-                        </Row>
+                        </Row>}
                     </Col>
                 </Row>
             </Container>

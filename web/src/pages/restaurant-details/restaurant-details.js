@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from "../../components/navbar/navbar";
-import { Button, Col, Container, Row } from "react-bootstrap";
+import { Button, Col, Container, Row, Spinner } from "react-bootstrap";
 
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -22,11 +22,12 @@ import ConfirmationDialog from '../../components/modals/confirmation-dialog/conf
 const RestaurantDetails = () => {
     const { restaurant_id } = useParams();
     const navigate = useNavigate();
-    const { isAuthed } = useAppContext();
+    const { isAuthed, profile } = useAppContext();
     const [restaurant, setRestaurant] = useState(null);
     const [menus, setMenus] = useState([]);
     const [selectedMenu, setSelectedMenu] = useState(null);
     const [deleteMenu, setDeleteMenu] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     const onModalHide = () => {
         setSelectedMenu(null);
@@ -97,11 +98,14 @@ const RestaurantDetails = () => {
         const fetchRestaurantMenus = async () => {
             const fetchedMenus = await menuService.fetchRestaurantMenus(restaurant_id);
             setMenus(fetchedMenus);
+            setLoading(false)
         }
         if (restaurant_id && restaurant) {
             fetchRestaurantMenus();
         }
     }, [restaurant_id, restaurant])
+
+    const hasPrivileges = restaurant_id === profile?.id
 
     return (
         <>
@@ -115,8 +119,15 @@ const RestaurantDetails = () => {
                                 <Col>
                                     <h4>Menu</h4>
                                 </Col>
-                                {isAuthed && <Col className='d-flex justify-content-end'>
+                                {isAuthed && hasPrivileges && <Col className='d-flex justify-content-end'>
                                     <Button variant="success" onClick={onAddNew}>+ Add New</Button>
+                                </Col>}
+                            </Row>
+                            <Row className='justify-content-center' style={{ position: 'absolute' }}>
+                                {loading && <Col>
+                                    <Spinner animation="border" role="status" variant="primary">
+                                        <span className="visually-hidden">Loading...</span>
+                                    </Spinner>
                                 </Col>}
                             </Row>
                         </Col>
@@ -127,7 +138,7 @@ const RestaurantDetails = () => {
                                 <Col>
                                     <h5>{menu.name}</h5>
                                 </Col>
-                                {isAuthed && <Col className='d-flex justify-content-end'>
+                                {isAuthed && hasPrivileges && <Col className='d-flex justify-content-end'>
                                     <Button variant="secondary" className='edit-btn' onClick={() => onEdit(menu)}>Edit</Button>
                                     <Button variant="danger" onClick={() => onDelete(menu)}>Delete</Button>
                                 </Col>}
@@ -146,8 +157,12 @@ const RestaurantDetails = () => {
                     </Row>)}
                 </Container>
             </Container>
-            <MenuDetailsModal show={selectedMenu && true} menu={selectedMenu} onHide={onModalHide} onSubmit={onSubmit} />
-            <ConfirmationDialog show={deleteMenu} onHide={setDeleteMenu} title='Warning' message='Are you sure you want to delete this menu?' onConfirm={onDeleteConfirm} />
+            {
+                hasPrivileges && <>
+                    <MenuDetailsModal show={selectedMenu && true} menu={selectedMenu} onHide={onModalHide} onSubmit={onSubmit} />
+                    <ConfirmationDialog show={deleteMenu} onHide={setDeleteMenu} title='Warning' message='Are you sure you want to delete this menu?' onConfirm={onDeleteConfirm} />
+                </>
+            }
         </>
     );
 }

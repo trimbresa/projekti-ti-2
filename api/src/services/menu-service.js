@@ -31,23 +31,16 @@ class MenuService {
         if (fetchedMenuItems.length === 0) {
             await menuItemsService.createMenuItems(menuData.menuItems, updatedMenu.id);
             const fetchedMenu = await menuRepository.getMenu(updatedMenu.id);
-
             return res.json({ data: fetchedMenu });
         }
 
         for (const existingMenuItem of fetchedMenuItems) {
-            console.log(existingMenuItem.id)
             const matchedItem = menuData.menuItems.find(item => item?.id === existingMenuItem.id);
             if (!matchedItem) {
                 await menuItemsRepository.deleteMenuItem(existingMenuItem);
-                console.log('deleting menu item: ', existingMenuItem)
-            } else if (matchedItem) {
-                // await menuItemsRepository.updateItem(existingMenuItem.id);
             }
-            // if(menuData.menuItems.find(item => item?.id !== existingMenuItem.id)) {
-            //     await menuItemsRepository.deleteMenuItem(existingMenuItem.id);
-            // }
         }
+        
         await menuItemsService.createMenuItems(menuData.menuItems, updatedMenu.id);
         const fetchedMenu = await menuRepository.getMenu(updatedMenu.id);
 

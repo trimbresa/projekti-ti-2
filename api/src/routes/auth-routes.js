@@ -4,8 +4,6 @@ const router = Router()
 //services
 const userService = require('../services/user-service');
 
-const userRepository = require('../repositories/customer-repository');
-
 router.post("/login", async (req, res) => {
   try {
     return await userService.login(req, res);
@@ -27,16 +25,12 @@ router.post("/register/restaurant", async (req, res) => {
 
 router.post("/register/customer", async (req, res) => {
   try {
-    const createdRestaurant = await userService.registerRestaurant(req);
-    res.json(createdRestaurant);
+    const createdCustomer = await userService.registerCustomer(req, res);
+    res.json(createdCustomer);
   } catch(error) {
     console.log(error);
     res.status(502).json({ message: '502, failed to create user!' });
   }
 })
-
-// router.get("/login", (req, res) => {
-//   res.send("login")
-// })
 
 module.exports = router;

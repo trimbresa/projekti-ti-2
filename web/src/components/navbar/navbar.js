@@ -21,7 +21,7 @@ const Navbar = ({ user = {} }) => {
       <Nav className="ml-auto">
         <Nav.Link as={NavLink} activeclassname="active" to="/">Home</Nav.Link>
         {appContext.isAuthed ? <NavDropdown
-          title={appContext?.profile?.user?.email || 'Settings'}
+          title={appContext?.profile?.user?.email || appContext?.profile?.email || 'Settings'}
           menuVariant="light"
           align="end"
         >

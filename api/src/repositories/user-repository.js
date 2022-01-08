@@ -4,7 +4,6 @@ const uuid = require('uuid').v4;
 class UserRepository extends BaseRepository {
     async createUser(newUser) {
         const {firstName = '', lastName = '', email, password} = newUser;
-        console.log(email);
         const repository = await this.getRepository();
         const {user} = repository.models;
 

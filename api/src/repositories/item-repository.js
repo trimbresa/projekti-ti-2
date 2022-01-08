@@ -9,6 +9,18 @@ class ItemRepository extends BaseRepository {
 
         return await item.create({id: uuid(), category, name, description, price});
     }
+
+    async getItem(itemId) {
+        const repository = await this.getRepository();
+        const {item} = repository.models;
+
+        return await item.findOne({
+            attributes: ['category', 'name', 'description', 'price'],
+            where: {
+                id: itemId
+            }
+        });
+    }
 }
 
 module.exports = new ItemRepository();

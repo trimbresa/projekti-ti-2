@@ -1,5 +1,7 @@
 import React from 'react';
 import {Badge, Button, ListGroup} from "react-bootstrap";
+import { FaTrash } from 'react-icons/fa';
+
 
 const MenuListItem = ({title, price, description, onDelete, showDeleteAction, itemIndex}) => {
     const onMenuItemDelete = () => {
@@ -18,7 +20,8 @@ const MenuListItem = ({title, price, description, onDelete, showDeleteAction, it
             <Badge variant="primary" bg="success" pill>
                 {price}
             </Badge>
-            {showDeleteAction && <Button onClick={onMenuItemDelete}>Delete</Button>}
+            {showDeleteAction && <Button size='sm' variant='danger' style={{ marginLeft: 5 }} onClick={onMenuItemDelete}>
+                <FaTrash/></Button>}
         </ListGroup.Item>
     );
 }

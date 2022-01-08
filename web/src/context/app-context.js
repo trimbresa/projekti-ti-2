@@ -20,7 +20,19 @@ export const AppProvider = ({children}) => {
             fetchUserData();
         }
         setIsLoading(false);
+
+        return () => {
+            alert('out')
+            setIsAuthed(false);
+            setProfile({});
+        }
     }, [])
+    
+    useEffect(() => {
+        if(!isAuthed) {
+            setProfile({});
+        }
+    }, [isAuthed])
 
     const fetchUserData = async () => {
         const fetchedUser = await userService.getProfile();
