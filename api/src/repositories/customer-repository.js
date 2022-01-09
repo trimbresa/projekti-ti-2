@@ -7,14 +7,22 @@ class CustomerRepository extends BaseRepository {
         const {customer} = repository.models;
         return await customer.create({id: uuid(), userId});
     }
+    
+    async updateCustomer(newData) {
+        const repository = await this.getRepository();
+        const {customer} = repository.models;
+        console.log({newData})
+        const updatedCustomer = await customer.update(
+                newData,
+                {
+                    where: {
+                        id: newData.id
+                    }
+                }
+            )
+        ;
 
-    async updateUser() {
-        // const repository = await this.getRepository();
-        // console.log(User)
-        // const dt = await repository.findAll({ where: { id: 1 } });
-
-        // console.log(User);
-        return 'welcome';
+        return updatedCustomer;
     }
 
     async getOne(id) {
@@ -28,7 +36,7 @@ class CustomerRepository extends BaseRepository {
             attributes: ['firstName', 'lastName', 'dob', 'email'],
             include: {
                 model: customer,
-                attributes: ['avatarUrl']
+                attributes: ["id", 'avatarUrl']
             }
         });
 

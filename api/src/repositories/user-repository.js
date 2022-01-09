@@ -24,13 +24,18 @@ class UserRepository extends BaseRepository {
         return foundUser;
     }
 
-    async updateUser() {
-        // const repository = await this.getRepository();
-        // console.log(User)
-        // const dt = await repository.findAll({ where: { id: 1 } });
-
-        // console.log(User);
-        return 'welcome';
+    async updateUser(newData) {
+        const repository = await this.getRepository();
+        const {user} = repository.models;
+        return await user.update(
+                newData,
+                {
+                    where: {
+                        id: newData.id
+                    }
+                }
+            )
+        ;
     }
 }
 

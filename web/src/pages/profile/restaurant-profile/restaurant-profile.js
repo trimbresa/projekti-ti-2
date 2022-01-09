@@ -1,7 +1,10 @@
-import React, {useEffect, useState} from 'react';
-import {Button, Card, Col, Form, Row} from "react-bootstrap";
+import React, { useEffect, useState } from 'react';
+import { Button, Card, Col, Form, Row } from "react-bootstrap";
+import { Link } from 'react-router-dom';
 import useApp from "../../../hooks/use-app";
 
+
+import { FaArrowRight } from 'react-icons/fa';
 import userService from "../../../services/user-service";
 import './restaurant-profile-styles.scss';
 
@@ -28,7 +31,6 @@ const RestaurantProfile = () => {
             }
 
             await userService.updateProfile(restaurantData);
-
             await appContext.fetchUserData();
 
             setIsSubmitting(false)
@@ -45,7 +47,7 @@ const RestaurantProfile = () => {
                 <Row>
                     <Col
                         className="p-0 restaurant-profile-card-img"
-                        style={{backgroundImage: `url('${pictureUrl}')`}}
+                        style={{ backgroundImage: `url('${pictureUrl}')` }}
                     />
                 </Row>
                 <Row className="mt-4">
@@ -76,9 +78,16 @@ const RestaurantProfile = () => {
                         </Form.Floating>
                     </Col>
                 </Row>
-                <Button variant="primary" className="mt-3" type="submit" disabled={isSubmitting}>
-                    {isSubmitting ? 'Submitting...' : 'Submit'}
-                </Button>
+                <Row className="mt-3">
+                    <Col>
+                        <Button variant="primary" type="submit" disabled={isSubmitting}>
+                            {isSubmitting ? 'Submitting...' : 'Submit'}
+                        </Button>
+                    </Col>
+                    <Col className='d-flex justify-content-end'>
+                        <Button as={Link} to={`/${appContext.profile.id}`} variant='info'>Preview <FaArrowRight/></Button>
+                    </Col>
+                </Row>
             </Card.Body>
         </Card>
     );

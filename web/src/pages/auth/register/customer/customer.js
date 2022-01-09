@@ -24,6 +24,7 @@ const validationSchema = Yup.object().shape({
 export default function Customer() {
     const { locale } = useLocalization();
     const registerLocale = locale["register"];
+    // eslint-disable-next-line no-unused-vars
     const [error, setError] = useState('');
     const appContext = useApp();
 
@@ -37,7 +38,6 @@ export default function Customer() {
     });
 
     const onSubmit = async (data) => {
-        console.log({ data });
         try {
             const response  = await authService.registerCustomer(data.email, data.password);
 
@@ -50,8 +50,7 @@ export default function Customer() {
             document.location.href = '/';
         } catch (error) {
             setError('Failed to register')
-        } finally {
-            // setIsSubmitting(false);
+            console.log(error);
         }
     }
 

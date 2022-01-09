@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from "../../components/navbar/navbar";
-import { Button, Col, Container, Row, Spinner } from "react-bootstrap";
+import { Button, Card, Col, Container, Row, Spinner } from "react-bootstrap";
 
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -18,11 +18,12 @@ import './restaurant-details-styles.scss';
 import menuService from '../../services/menu-service';
 import MenuDetailsModal from '../../components/modals/menu-details-modal/menu-details-modal';
 import ConfirmationDialog from '../../components/modals/confirmation-dialog/confirmation-dialog';
+import Cart from '../../components/lists/cart/cart';
 
 const RestaurantDetails = () => {
     const { restaurant_id } = useParams();
     const navigate = useNavigate();
-    const { isAuthed, profile } = useAppContext();
+    const { isAuthed, profile, cart, setCart } = useAppContext();
     const [restaurant, setRestaurant] = useState(null);
     const [menus, setMenus] = useState([]);
     const [selectedMenu, setSelectedMenu] = useState(null);
@@ -107,14 +108,39 @@ const RestaurantDetails = () => {
 
     const hasPrivileges = restaurant_id === profile?.id
 
+    const onAddToCart = (item) => {
+        const existingItemIndex = cart?.findIndex(cartItem => cartItem?.itemDetails?.id === item.id);
+
+        if (existingItemIndex !== -1) {
+            const existingItem = cart[existingItemIndex];
+            const updatedCart = [
+                ...cart.slice(0, existingItemIndex),
+                {
+                    itemDetails: item,
+                    quantity: existingItem.quantity += 1
+                },
+                ...cart.slice(existingItemIndex + 1),
+            ]
+            return setCart(updatedCart);
+        }
+
+        return setCart([
+            ...cart,
+            {
+                itemDetails: item,
+                quantity: 1
+            }
+        ]);
+    }
+
     return (
         <>
             <Navbar />
             <Container fluid className="layout">
                 <RestaurantHeader restaurant={restaurant} />
                 <Container className='mb-5'>
-                    <Row className="py-4 mb-3">
-                        <Col md={6}>
+                    <Row className="py-4">
+                        <Col md={6} className='mb-3'>
                             <Row>
                                 <Col>
                                     <h4>Menu</h4>
@@ -130,31 +156,44 @@ const RestaurantDetails = () => {
                                     </Spinner>
                                 </Col>}
                             </Row>
-                        </Col>
-                    </Row>
-                    {menus.map(menu => <Row key={menu.id} className='mb-5'>
-                        <Col md={6}>
-                            <Row className='align-items-center py-3 justify-space-between'>
-                                <Col>
-                                    <h5>{menu.name}</h5>
+                            {!loading && menus.length === 0 && <Row className='mt-3'>
+                                <Col lg={6} sm={12}>
+                                    <Card className='p-3'>
+                                        <Card.Title className='mb-0 text-center fs-6'>No menu to show.</Card.Title>
+                                    </Card>
                                 </Col>
-                                {isAuthed && hasPrivileges && <Col className='d-flex justify-content-end'>
-                                    <Button variant="secondary" className='edit-btn' onClick={() => onEdit(menu)}>Edit</Button>
-                                    <Button variant="danger" onClick={() => onDelete(menu)}>Delete</Button>
-                                </Col>}
-                            </Row>
-                            <MenuList>
-                                {menu?.menuItems?.map(menuItem => (
-                                    <MenuListItem
-                                        key={menuItem.id}
-                                        title={menuItem.item.name}
-                                        description={menuItem.item.description}
-                                        price={`$${menuItem.item.price}`}
-                                    />
-                                ))}
-                            </MenuList>
+                            </Row>}
+                            {menus.map(menu => <Row key={menu.id} className='mb-5'>
+                                <Col>
+                                    <Row className='align-items-center py-3 justify-space-between'>
+                                        <Col>
+                                            <h5>{menu.name}</h5>
+                                        </Col>
+                                        {isAuthed && hasPrivileges && <Col className='d-flex justify-content-end'>
+                                            <Button variant="secondary" className='edit-btn' onClick={() => onEdit(menu)}>Edit</Button>
+                                            <Button variant="danger" onClick={() => onDelete(menu)}>Delete</Button>
+                                        </Col>}
+                                    </Row>
+                                    <MenuList hoverable={!hasPrivileges}>
+                                        {menu?.menuItems?.map(menuItem => (
+                                            <MenuListItem
+                                                key={menuItem.id}
+                                                title={menuItem.item.name}
+                                                description={menuItem.item.description}
+                                                price={menuItem.item.price}
+                                                onAddToCart={() => onAddToCart(menuItem)}
+                                            />
+                                        ))}
+                                    </MenuList>
+                                </Col>
+                            </Row>)}
                         </Col>
-                    </Row>)}
+                        {!hasPrivileges && <Col md={{ span: 4, offset: 1 }} className='mb-3'>
+                            <div className='sticky-top bg-white pb-3' style={{ paddingTop: 70 }}>
+                                <Cart />
+                            </div>
+                        </Col>}
+                    </Row>
                 </Container>
             </Container>
             {

@@ -13,6 +13,7 @@ export const AppProvider = ({children}) => {
     const [profile, setProfile] = useState({});
     const [token, setToken] = useState('');
     const [isLoading, setIsLoading] = useState(true);
+    const [cart, setCart] = useState([]);
 
     useEffect(() => {
         if (localStorage.getItem('token')) {
@@ -22,7 +23,6 @@ export const AppProvider = ({children}) => {
         setIsLoading(false);
 
         return () => {
-            alert('out')
             setIsAuthed(false);
             setProfile({});
         }
@@ -50,7 +50,9 @@ export const AppProvider = ({children}) => {
         setProfile,
         token,
         setToken,
-        fetchUserData
+        fetchUserData,
+        cart,
+        setCart
     }}>
         {children}
     </AppContext.Provider>

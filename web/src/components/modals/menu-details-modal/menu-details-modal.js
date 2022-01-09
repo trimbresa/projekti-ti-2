@@ -25,12 +25,21 @@ export default function MenuDetailsModal(props) {
     },
   });
 
-  const onSubmit = (data) => {
-    const updatedData = {
-      ...data,
-      menuItems
+  const { values, handleSubmit, handleChange, errors, touched, setSubmitting, isSubmitting } = formik;
+
+  const onSubmit = async (data) => {
+    setSubmitting(true);
+    try {
+      const updatedData = {
+        ...data,
+        menuItems
+      }
+      await props.onSubmit(updatedData)
+    } catch(error) {
+      console.log(error.message)
+    } finally {
+      setSubmitting(false);
     }
-    props.onSubmit(updatedData)
   }
 
   const [menuItems, setMenuItems] = useState([]);
@@ -52,9 +61,7 @@ export default function MenuDetailsModal(props) {
 
   const onMenuItemDelete = (itemIndex) => {
     const filteredMenuItems = menuItems.filter((item, index) => (index !== itemIndex));
-    // console.log(filteredMenuItems)
     setMenuItems(filteredMenuItems)
-    // setMenuItems([])
   }
 
   useEffect(() => {
@@ -67,8 +74,6 @@ export default function MenuDetailsModal(props) {
     return () => formik.resetForm();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [show])
-
-  const { values, handleSubmit, handleChange, errors, touched } = formik;
 
   return (
     <Modal show={show} onHide={onHide} backdrop="static" size='md'>
@@ -90,7 +95,7 @@ export default function MenuDetailsModal(props) {
               itemIndex={index}
               title={menuItem.item.name}
               description={menuItem.item.description}
-              price={`$${menuItem.item.price}`}
+              price={menuItem.item.price}
               onDelete={onMenuItemDelete}
               showDeleteAction
             />
@@ -100,7 +105,9 @@ export default function MenuDetailsModal(props) {
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={onHide}>Close</Button>
-        <Button variant="primary" onClick={handleSubmit}>Save changes</Button>
+        <Button variant="primary" onClick={handleSubmit} disabled={isSubmitting}>
+          {isSubmitting ? 'Saving changes...' : 'Save changes'}
+        </Button>
       </Modal.Footer>
     </Modal>
   )

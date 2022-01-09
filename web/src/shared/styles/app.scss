@@ -1,3 +1,11 @@
 $primary: #ff9f1a;
 
 @import "~bootstrap/scss/bootstrap";
+
+.list-group-hover .list-group-item:hover {
+  opacity: 0.7;
+  cursor: pointer;
+}
+.list-group-hover .list-group-item:active {
+  opacity: 0.5;
+}

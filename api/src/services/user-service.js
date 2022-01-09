@@ -51,18 +51,18 @@ class UserService {
 
     async registerCustomer(req, res) {
         const salt = await bcrypt.genSalt(10);
-    
+
         const userData = req.body;
         const newUserData = {
             ...userData
         }
         newUserData.password = await bcrypt.hash(userData.password, salt);
-    
+
         const createdUser = await userRepository.createUser(newUserData);
         await customerRepository.createCustomer(createdUser.id);
-        
+
         const token = await createJwtToken({ id: createdUser.id, email: createdUser.email });
-    
+
         return await res.json({ token });
     }
 
@@ -88,9 +88,34 @@ class UserService {
         const foundUser = await userRepository.getUser(tokenData.email);
         const foundRestaurant = await restaurantRepository.getByUserId(foundUser.id);
 
+        console.log(foundUser.id)
+        const userBaseData = {
+            id: foundUser.id,
+            firstName: req?.body?.firstName || foundUser.firstName,
+            lastName: req?.body?.lastName || foundUser.lastName,
+        }
+
+        await userRepository.updateUser(userBaseData);
+
         if (foundRestaurant) {
-            const updatedRestaurant = await restaurantRepository.updateRestaurant(req.body);
-            return res.json({ data: updatedRestaurant })
+            const userRestaurantData = {
+                ...req.body,
+                id: foundRestaurant.id
+            }
+            await restaurantRepository.updateRestaurant(userRestaurantData);
+            const updatedUser = await this.getProfile(req, res)
+            return res.json({ data: updatedUser })
+        }
+
+        const foundCustomer = await customerRepository.getOne(foundUser.id);
+        if (foundCustomer) {
+            const userCustomerData = {
+                ...req.body,
+                id: foundCustomer.customer.id
+            }
+            await customerRepository.updateCustomer(userCustomerData);
+            const updatedUser = await this.getProfile(req, res)
+            return res.json({ data: updatedUser })
         }
 
         return res.status(404).json({ message: "Not found." });

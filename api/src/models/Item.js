@@ -11,7 +11,7 @@ const Item = (sequelize) => {
         category: DataTypes.STRING(255),
         name: DataTypes.STRING(255),
         description: DataTypes.STRING(255),
-        price: DataTypes.DOUBLE,
+        price: DataTypes.DECIMAL(15,6),
     }, baseModel().options);
 };
 
