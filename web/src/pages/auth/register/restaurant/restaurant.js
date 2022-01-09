@@ -1,39 +1,58 @@
-import React, {useState} from 'react'
-import {Button, Form} from "react-bootstrap";
+import React, { useState } from 'react'
+import { Button, Form } from "react-bootstrap";
 import useApp from "../../../../hooks/use-app";
 import authService from "../../../../services/auth-service";
 import useLocalization from '../../../../hooks/use-localization';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+
+const initialValues = {
+    restaurantName: '',
+    pictureUrl: '',
+    email: '',
+    password: '',
+    confirmPassword: ''
+};
+
+const validationSchema = Yup.object().shape({
+    restaurantName: Yup.string().min(3, 'Should contain at least 3 letters').required('Required'),
+    pictureUrl: Yup.string(),
+    email: Yup.string().email().required('Required'),
+    password: Yup.string().required('Password is required'),
+});
+
 
 export default function Restaurant() {
-    const [restaurantName, setRestaurantName] = useState('');
-    const [pictureUrl, setPictureUrl] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-    const [isSubmitting, setIsSubmitting] = useState(false);
     const appContext = useApp();
 
     const { locale } = useLocalization();
     const registerLocale = locale["register"];
 
-    const onSubmit = async (event) => {
-        event.preventDefault();
-        setIsSubmitting(true);
+    const formik = useFormik({
+        initialValues,
+        validationSchema,
+        onSubmit: (data, { setSubmitting }) => {
+            setSubmitting(true)
+            onSubmit(data);
+        },
+    });
 
+    const { values, handleSubmit, handleChange, errors, touched, setSubmitting, isSubmitting } = formik;
+
+    const onSubmit = async (data) => {
         try {
             const restaurant = {
-                restaurantName,
-                pictureUrl,
-                email,
-                password,
+                restaurantName: data.restaurantName,
+                pictureUrl: data.pictureUrl,
+                email: data.email,
+                password: data.password,
             }
 
-            console.log(restaurant);
+            const response = await authService.registerRestaurant(restaurant);
 
-            const response  = await authService.registerRestaurant(restaurant);
-
-            if(response.message) {
-                return setError('Failed to register.');
+            if (response.message) {
+                throw new Error('Failed to register');
             }
 
             localStorage.setItem('token', response.token);
@@ -42,48 +61,55 @@ export default function Restaurant() {
         } catch (error) {
             setError('Failed to register')
         } finally {
-            setIsSubmitting(false);
+            setSubmitting(false);
         }
     }
 
     return (
-        <Form onSubmit={onSubmit}>
-            <Form.Group className="mb-3">
+        <Form onSubmit={handleSubmit}>
+            <Form.Group>
                 <Form.Label>{registerLocale.restaurantInputs.restaurantName.label}</Form.Label>
                 <Form.Control
                     type="text"
                     placeholder={registerLocale.restaurantInputs.restaurantName.placeholder}
-                    value={restaurantName}
-                    onChange={(event) => setRestaurantName(event.target.value)}
-                    aria-required={true}
+                    name='restaurantName'
+                    value={values.restaurantName}
+                    onChange={handleChange}
                 />
+                <label className='text-danger'>{errors.restaurantName && touched.restaurantName && errors.restaurantName}</label>
             </Form.Group>
-            <Form.Group className="mb-3">
+            <Form.Group>
                 <Form.Label>{registerLocale.restaurantInputs.pictureUrl.label}</Form.Label>
                 <Form.Control
                     type="text"
                     placeholder={registerLocale.restaurantInputs.pictureUrl.placeholder}
-                    value={pictureUrl}
-                    onChange={(event) => setPictureUrl(event.target.value)}
+                    name='pictureUrl'
+                    value={values.pictureUrl}
+                    onChange={handleChange}
                 />
+                <label className='text-danger'>{errors.pictureUrl && touched.pictureUrl && errors.pictureUrl}</label>
             </Form.Group>
-            <Form.Group className="mb-3">
+            <Form.Group>
                 <Form.Label>{registerLocale.restaurantInputs.email.label}</Form.Label>
                 <Form.Control
                     type="email"
                     placeholder={registerLocale.restaurantInputs.email.placeholder}
-                    value={email}
-                    onChange={(event) => setEmail(event.target.value)}
+                    name='email'
+                    value={values.email}
+                    onChange={handleChange}
                 />
+                <label className='text-danger'>{errors.email && touched.email && errors.email}</label>
             </Form.Group>
-            <Form.Group className="mb-3">
+            <Form.Group>
                 <Form.Label>{registerLocale.restaurantInputs.password.label}</Form.Label>
                 <Form.Control
                     type="password"
                     placeholder={registerLocale.restaurantInputs.password.placeholder}
-                    value={password}
-                    onChange={(event) => setPassword(event.target.value)}
+                    name='password'
+                    value={values.password}
+                    onChange={handleChange}
                 />
+                <label className='text-danger'>{errors.password && touched.password && errors.password}</label>
             </Form.Group>
             <h4 className='text-danger'>{error}</h4>
             <Button variant="primary" type="submit" disabled={isSubmitting} >

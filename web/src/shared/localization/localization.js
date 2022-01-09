@@ -32,8 +32,8 @@ const localization = {
       },
       customerInputs: {
         email: {
-          label: 'Adresa e emailit',
-          placeholder: 'Shtypni adresën e emailit'
+          label: 'Email adresa',
+          placeholder: 'Shtypni email adresën'
         },
         password: {
           label: 'Fjalëkalimi',
@@ -56,8 +56,8 @@ const localization = {
           placeholder: 'URL i fotos'
         },
         email: {
-          label: 'Adresa e emailit',
-          placeholder: 'Shtypni adresën e emailit'
+          label: 'Email adresa',
+          placeholder: 'Shtypni email adresën'
         },
         password: {
           label: 'Fjalëkalimi',
@@ -67,8 +67,8 @@ const localization = {
         submitting: 'Duke paraqitur...'
       },
       haveAnAccount: {
-        text: 'AL - Already have an account?',
-        linkTitle: 'AL - Login'
+        text: 'Keni llogari?',
+        linkTitle: 'Hyrje'
       }
     },
     components: {

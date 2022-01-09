@@ -107,6 +107,7 @@ const RestaurantDetails = () => {
     }, [restaurant_id, restaurant])
 
     const hasPrivileges = restaurant_id === profile?.id
+    const isCustomer = !profile?.restaurantName && true;
 
     const onAddToCart = (item) => {
         const existingItemIndex = cart?.findIndex(cartItem => cartItem?.itemDetails?.id === item.id);
@@ -141,7 +142,7 @@ const RestaurantDetails = () => {
                 <Container className='mb-5'>
                     <Row className="py-4">
                         <Col md={6} className='mb-3'>
-                            <Row>
+                            <Row className='mb-4'>
                                 <Col>
                                     <h4>Menu</h4>
                                 </Col>
@@ -174,7 +175,7 @@ const RestaurantDetails = () => {
                                             <Button variant="danger" onClick={() => onDelete(menu)}>Delete</Button>
                                         </Col>}
                                     </Row>
-                                    <MenuList hoverable={!hasPrivileges}>
+                                    <MenuList hoverable={isCustomer && isAuthed}>
                                         {menu?.menuItems?.map(menuItem => (
                                             <MenuListItem
                                                 key={menuItem.id}
@@ -188,7 +189,7 @@ const RestaurantDetails = () => {
                                 </Col>
                             </Row>)}
                         </Col>
-                        {!hasPrivileges && <Col md={{ span: 4, offset: 1 }} className='mb-3'>
+                        {isCustomer && isAuthed && !loading && <Col md={{ span: 4, offset: 1 }} className='mb-3'>
                             <div className='sticky-top bg-white pb-3' style={{ paddingTop: 70 }}>
                                 <Cart />
                             </div>

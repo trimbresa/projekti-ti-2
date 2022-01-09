@@ -1,5 +1,5 @@
-const {Sequelize, DataTypes, sequelize} = require("sequelize");
-const {dbConfig} = require("../config/config");
+const { Sequelize, DataTypes, sequelize } = require("sequelize");
+const { dbConfig } = require("../config/config");
 const Models = require("../models");
 
 const dbConnection = () => new Sequelize(dbConfig.DB_NAME, dbConfig.DB_USER, dbConfig.DB_PASSWORD, {
@@ -9,11 +9,11 @@ const dbConnection = () => new Sequelize(dbConfig.DB_NAME, dbConfig.DB_USER, dbC
 });
 
 const applyAssociations = (sequelize) => {
-    const { user, customer, address, restaurant, menu, menuItems, item } = sequelize.models;
+    const { user, customer, address, restaurant, menu, menuItems, item, order, orderItems } = sequelize.models;
 
     // user to customer relations
-    user.hasOne(customer, { foreignKey: { allowNull: false }});
-    customer.belongsTo(user, { foreignKey: { allowNull: false }});
+    user.hasOne(customer, { foreignKey: { allowNull: false } });
+    customer.belongsTo(user, { foreignKey: { allowNull: false } });
 
     // address to user relations
     address.hasOne(user);
@@ -50,6 +50,29 @@ const applyAssociations = (sequelize) => {
         onDelete: 'CASCADE'
     })
 
+    customer.hasMany(order, { onDelete: 'CASCADE' })
+    order.belongsTo(customer, {
+        foreignKey: {
+            allowNull: false
+        },
+        onDelete: 'CASCADE'
+    })
+    order.hasMany(orderItems, { onDelete: 'CASCADE' })
+    orderItems.belongsTo(order, {
+        foreignKey: {
+            allowNull: false
+        },
+        onDelete: 'CASCADE'
+    })
+    
+    item.hasMany(orderItems, { onDelete: 'CASCADE' })
+    orderItems.belongsTo(item, {
+        foreignKey: {
+            allowNull: false
+        },
+        onDelete: 'CASCADE'
+    })
+
     console.log('created associations')
 }
 
@@ -59,7 +82,7 @@ const initDbConnection = async () => {
 
     const allModels = Models;
 
-    for(const model of allModels) {
+    for (const model of allModels) {
         model(newDbConnection);
     }
     applyAssociations(newDbConnection);

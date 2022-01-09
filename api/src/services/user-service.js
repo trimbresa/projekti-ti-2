@@ -75,7 +75,7 @@ class UserService {
             return res.json({ data: foundRestaurant })
         }
 
-        const foundCustomer = await customerRepository.getOne(dataFromToken.id);
+        const foundCustomer = await customerRepository.getOne(foundUser.id);
         if (foundCustomer) {
             return res.json({ data: foundCustomer })
         }
@@ -88,7 +88,6 @@ class UserService {
         const foundUser = await userRepository.getUser(tokenData.email);
         const foundRestaurant = await restaurantRepository.getByUserId(foundUser.id);
 
-        console.log(foundUser.id)
         const userBaseData = {
             id: foundUser.id,
             firstName: req?.body?.firstName || foundUser.firstName,

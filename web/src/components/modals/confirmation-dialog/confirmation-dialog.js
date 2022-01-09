@@ -2,7 +2,7 @@ import React from 'react'
 import { Button, Modal } from 'react-bootstrap'
 
 export default function ConfirmationDialog(props) {
-  const { title, message, onHide, onConfirm, show } = props;
+  const { title, message, onHide, onConfirm, show, confirming } = props;
   return (
     <Modal show={show} onHide={onHide}>
       <Modal.Header closeButton>
@@ -13,7 +13,7 @@ export default function ConfirmationDialog(props) {
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={() => onHide(false)}>Cancel</Button>
-        <Button variant="primary" onClick={onConfirm}>Confirm</Button>
+        <Button variant="primary" disabled={confirming} onClick={onConfirm}>{confirming ? 'Confirming...' : 'Confirm'}</Button>
       </Modal.Footer>
     </Modal>
   )

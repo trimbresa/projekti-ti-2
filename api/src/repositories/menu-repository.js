@@ -29,7 +29,7 @@ class MenuRepository extends BaseRepository {
                 attributes: ['id'],
                 include: {
                     model: item,
-                    attributes: ['name', 'price', 'description', 'category']
+                    attributes: ['id', 'name', 'price', 'description', 'category']
                 }
             }]
         });
@@ -51,7 +51,7 @@ class MenuRepository extends BaseRepository {
                 attributes: ['id'],
                 include: {
                     model: item,
-                    attributes: ['name', 'price', 'description', 'category']
+                    attributes: ['id', 'name', 'price', 'description', 'category']
                 }
             }]
         });

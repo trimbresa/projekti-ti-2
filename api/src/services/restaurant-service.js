@@ -3,9 +3,6 @@ const restaurantRepository = require('../repositories/restaurant-repository');
 class RestaurantService {
     async fetchRestaurants(req, res) {
         const fetchedRestaurants = await restaurantRepository.fetch();
-
-        console.log(fetchedRestaurants);
-
         return res.json({ data: fetchedRestaurants });
     }
 

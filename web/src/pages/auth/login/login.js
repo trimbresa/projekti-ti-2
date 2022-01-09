@@ -1,37 +1,55 @@
 import React, { useState } from 'react'
+import { useFormik } from 'formik';
 import { Link } from 'react-router-dom'
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import Navbar from "../../../components/navbar/navbar";
 import authService from "../../../services/auth-service";
 import useApp from "../../../hooks/use-app";
 import useLocalization from '../../../hooks/use-localization';
+import * as Yup from 'yup';
+
+const initialValues = {
+    email: '',
+    password: '',
+};
+
+const validationSchema = Yup.object().shape({
+    email: Yup.string().email().required('Required'),
+    password: Yup.string().required('Required'),
+});
 
 export default function Login() {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-    const [isSubmitting, setIsSubmitting] = useState(false);
     const appContext = useApp();
     const { locale } = useLocalization();
 
-    const onSubmit = async (event) => {
-        event.preventDefault();
-        setIsSubmitting(true);
+    const formik = useFormik({
+        initialValues,
+        validationSchema,
+        enableReinitialize: true,
+        onSubmit: (data, { setSubmitting }) => {
+            setSubmitting(true)
+            onSubmit(data);
+        }
+    });
 
+    const { values, handleSubmit, handleChange, errors, touched, setSubmitting, isSubmitting } = formik;
+
+    const onSubmit = async (data) => {
+        setError('')
         try {
             setError('');
-            const res = await authService.login(email, password);
+            const res = await authService.login(data.email, data.password);
             if (res.message) {
-                return setError(res.message);
+                throw new Error(res.message);
             }
             localStorage.setItem('token', res.token);
             appContext.setIsAuthed(true);
             document.location.href = '/';
         } catch (error) {
-            console.log(error.message)
-            setError(error.message);
+            setError('Invalid credentials');
         } finally {
-            setIsSubmitting(false);
+            setSubmitting(false);
         }
     }
 
@@ -44,25 +62,28 @@ export default function Login() {
                 <Row className="d-flex h-100 justify-content-center align-content-center">
                     <Col sm={4}>
                         <h4>{loginLocale.title}</h4>
-                        <Form onSubmit={onSubmit}>
-                            <Form.Group className="mb-3" controlId="formBasicEmail">
+                        <Form onSubmit={handleSubmit}>
+                            <Form.Group>
                                 <Form.Label>{loginLocale.inputs.email.label}</Form.Label>
                                 <Form.Control
                                     type="email"
                                     placeholder={loginLocale.inputs.email.placeholder}
-                                    value={email}
-                                    onChange={(event) => setEmail(event.target.value)}
+                                    name='email'
+                                    value={values.email}
+                                    onChange={handleChange}
                                 />
+                                <label className='text-danger'>{errors.email && touched.email && errors.email}</label>
                             </Form.Group>
-
-                            <Form.Group className="mb-3" controlId="formBasicPassword">
+                            <Form.Group>
                                 <Form.Label>{loginLocale.inputs.password.label}</Form.Label>
                                 <Form.Control
                                     type="password"
-                                    value={password}
                                     placeholder={loginLocale.inputs.password.placeholder}
-                                    onChange={(event) => setPassword(event.target.value)}
+                                    name='password'
+                                    value={values.password}
+                                    onChange={handleChange}
                                 />
+                                <label className='text-danger'>{errors.password && touched.password && errors.password}</label>
                             </Form.Group>
                             <Col sm={12}>
                                 <p className='text-danger'>{error}</p>

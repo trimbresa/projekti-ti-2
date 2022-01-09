@@ -4,10 +4,12 @@ import useApp from '../../../hooks/use-app';
 import { FaCartPlus } from 'react-icons/fa';
 import { IoMdClose } from 'react-icons/io';
 import ConfirmationDialog from '../../modals/confirmation-dialog/confirmation-dialog';
+import orderService from '../../../services/order-service';
 
 export default function Cart() {
   const { cart, setCart } = useApp();
   const [checkoutDialog, setCheckoutDialog] = useState(false);
+  const [confirming, setConfirming] = useState(false);
 
   const currencyFormatter = new Intl.NumberFormat('us-US', { style: 'currency', currency: 'EUR' });
 
@@ -40,11 +42,18 @@ export default function Cart() {
     setCheckoutDialog(true);
   }
 
-  const onCheckoutConfirm = () => {
-    alert('order has been placed.');
-    // TODO - Implement purchase functionality
-    setCheckoutDialog(false);
-    setCart([]);
+  const onCheckoutConfirm = async () => {
+    setConfirming(true);
+    try {
+      await orderService.checkoutOrders(cart);
+      setCheckoutDialog(false);
+      setCart([]);
+      alert('order has been placed.');
+    } catch(error) {
+      console.log(error.message);
+    } finally {
+      setConfirming(false);
+    }
   }
 
   return (
@@ -91,7 +100,7 @@ export default function Cart() {
           </Row>
         </Card.Footer>}
       </Card>
-      <ConfirmationDialog show={checkoutDialog} onHide={setCheckoutDialog} onConfirm={onCheckoutConfirm} title='Warning!' message='Are you sure you want to checkout?' />
+      <ConfirmationDialog show={checkoutDialog} confirming={confirming} onHide={setCheckoutDialog} onConfirm={onCheckoutConfirm} title='Warning!' message='Are you sure you want to checkout?' />
     </>
   )
 }

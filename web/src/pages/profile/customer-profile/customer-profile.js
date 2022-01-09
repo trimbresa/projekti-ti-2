@@ -14,8 +14,8 @@ const initialValues = {
 };
 
 const validationSchema = Yup.object().shape({
-    firstName: Yup.string().trim().min(3, 'Too Short!').max(255, 'Too long!').required('Required'),
-    lastName: Yup.string().trim().min(5, 'Too Short!').max(255, 'Too long!').required('Required'),
+    firstName: Yup.string().trim().min(2, 'Too Short!').max(255, 'Too long!').required('Required'),
+    lastName: Yup.string().trim().min(2, 'Too Short!').max(255, 'Too long!').required('Required'),
     avatarUrl: Yup.string().max(255, 'Too long!'),
 });
 
@@ -53,7 +53,7 @@ const CustomerProfile = () => {
     useEffect(() => {
         setFieldValue('firstName', appContext.profile.firstName || appContext?.profile?.user?.firstName)
         setFieldValue('lastName', appContext.profile.lastName || appContext?.profile?.user?.lastName)
-        setFieldValue('avatarUrl', appContext.profile.customer?.avatarUrl)
+        setFieldValue('avatarUrl', appContext.profile.customer?.avatarUrl || '')
     }, [appContext, setFieldValue])
 
     return (
