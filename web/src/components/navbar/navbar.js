@@ -6,7 +6,7 @@ import useLocalization from '../../hooks/use-localization';
 const Navbar = ({ user = {} }) => {
 
   const appContext = useApp();
-  const { language, setLanguage } = useLocalization();
+  const { language, setLanguage, locale } = useLocalization();
 
   const navigation = useNavigate();
   const logout = () => {
@@ -15,30 +15,32 @@ const Navbar = ({ user = {} }) => {
     navigation('/login');
   }
 
+  const navbarLocale = locale.components.navbar;
+
   return <RBNavbar className="bg-primary" fixed="top">
     <Container>
       <RBNavbar.Brand as={Link} to="/">eFood</RBNavbar.Brand>
       <Nav className="ml-auto">
-        <Nav.Link as={NavLink} activeclassname="active" to="/">Home</Nav.Link>
+        <Nav.Link as={NavLink} activeclassname="active" to="/">{navbarLocale.links.home}</Nav.Link>
         {appContext.isAuthed ? <NavDropdown
-          title={appContext?.profile?.user?.email || appContext?.profile?.email || 'Settings'}
+          title={appContext?.profile?.user?.email || appContext?.profile?.email || navbarLocale.links.settings}
           menuVariant="light"
           align="end"
         >
-          <NavDropdown.Item as={NavLink} to="/profile">Profile</NavDropdown.Item>
+          <NavDropdown.Item as={NavLink} to="/profile">{navbarLocale.links.profile}</NavDropdown.Item>
           <NavDropdown.Divider />
-          <NavDropdown.Item onClick={logout}>Logout</NavDropdown.Item>
+          <NavDropdown.Item onClick={logout}>{navbarLocale.links.logout}</NavDropdown.Item>
         </NavDropdown>
-          : <Nav.Link as={NavLink} activeclassname="active" to="/login">Login</Nav.Link>
+          : <Nav.Link as={NavLink} activeclassname="active" to="/login">{navbarLocale.links.login}</Nav.Link>
         }
         <NavDropdown
           title={language.toUpperCase()}
           menuVariant="light"
           align="end"
         >
-          <NavDropdown.Item as={Button} onClick={() => setLanguage('al')} active={language === 'al'}>Albanian</NavDropdown.Item>
+          <NavDropdown.Item as={Button} onClick={() => setLanguage('al')} active={language === 'al'}>{navbarLocale.links.language.albanian}</NavDropdown.Item>
           <NavDropdown.Divider />
-          <NavDropdown.Item as={Button} onClick={() => setLanguage('en')} active={language === 'en'}>English</NavDropdown.Item>
+          <NavDropdown.Item as={Button} onClick={() => setLanguage('en')} active={language === 'en'}>{navbarLocale.links.language.english}</NavDropdown.Item>
         </NavDropdown>
       </Nav>
     </Container>

@@ -74,6 +74,19 @@ const localization = {
     components: {
       restaurantCard: {
         viewMore: 'Shiko më shumë'
+      },
+      navbar: {
+        links: {
+          home: 'Shtëpia',
+          settings: 'Configurimet',
+          profile: 'Profili',
+          logout: 'Çkyqu',
+          login: 'Hyrje',
+          language: {
+            english: 'Anglisht',
+            albanian: 'Shqip'
+          }
+        }
       }
     }
   },
@@ -152,6 +165,19 @@ const localization = {
     components: {
       restaurantCard: {
         viewMore: 'View More'
+      },
+      navbar: {
+        links: {
+          home: 'Home',
+          settings: 'Settings',
+          profile: 'Profile',
+          logout: 'Logout',
+          login: 'Login',
+          language: {
+            english: 'English',
+            albanian: 'Albanian'
+          }
+        }
       }
     }
   },
