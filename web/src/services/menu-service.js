@@ -13,8 +13,8 @@ class MenuService extends BaseService {
         return (await this.apiPatch('/menu', updatedMenu))?.data || null;
     }
 
-    async deleteMenu(newMenu) {
-        return (await this.apiDelete('/menu', newMenu))?.data || [];
+    async deleteMenu(menu) {
+        return (await this.apiDelete('/menu', menu))?.data || [];
     }
 }
 

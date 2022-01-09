@@ -28,45 +28,28 @@ class OrderService {
             const fetchedOrder = await orderRepository.getOrder(createdOrder.id);
             return res.json({ data: fetchedOrder });
         }
-        
+
         return res.status(403).json({ "message": "Unauthorized!" })
     }
 
-    // async updateMenu(req, res) {
-    //     const menuData = req.body;
-    //     const updatedMenu = await menuRepository.updateMenu(menuData);
-    //     const fetchedMenuItems = await menuItemsRepository.fetchMenuItems(updatedMenu.id);
+    async deleteOrder(req, res) {
+        const { orderId } = req.body;
 
-    //     if (fetchedMenuItems.length === 0) {
-    //         await menuItemsService.createMenuItems(menuData.menuItems, updatedMenu.id);
-    //         const fetchedMenu = await menuRepository.getMenu(updatedMenu.id);
-    //         return res.json({ data: fetchedMenu });
-    //     }
+        const tokenData = await verifyJwtToken(req?.headers?.token ?? '');
+        const foundCustomer = await customerRepository.getOne(tokenData.id);
 
-    //     for (const existingMenuItem of fetchedMenuItems) {
-    //         const matchedItem = menuData.menuItems.find(item => item?.id === existingMenuItem.id);
-    //         if (!matchedItem) {
-    //             await menuItemsRepository.deleteMenuItem(existingMenuItem);
-    //         }
-    //     }
+        const orderToDelete = await orderRepository.getOrderWithCustomer(orderId);
+        if (!orderToDelete) {
+            return res.status(404).json({ "message": "Not found!" })
+        }
 
-    //     await menuItemsService.createMenuItems(menuData.menuItems, updatedMenu.id);
-    //     const fetchedMenu = await menuRepository.getMenu(updatedMenu.id);
+        if (orderToDelete.customerId === foundCustomer?.customer?.id) {
+            await orderRepository.deleteOrder(orderId);
+            return res.json({ data: true });
+        }
 
-    //     return res.json({ data: fetchedMenu });
-    // }
-
-    // async fetchRestaurantMenus(req, res) {
-    //     const { restaurant_id } = req.params;
-    //     const fetchedMenus = await menuRepository.fetchRestaurantMenus(restaurant_id);
-    //     return res.json({ data: fetchedMenus });
-    // }
-
-    // async deleteMenu(req, res) {
-    //     const { menuId } = req.body;
-    //     await menuRepository.deleteMenu(menuId);
-    //     return res.json({ data: true });
-    // }
+        return res.status(403).json({ "message": "Unauthorized!" });
+    }
 }
 
 module.exports = new OrderService();

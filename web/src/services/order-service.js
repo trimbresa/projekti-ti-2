@@ -14,6 +14,10 @@ class OrderService extends BaseService {
     }
     return (await this.apiPost('/order', ordersToCheckout))?.data || null;
   }
+
+  async deleteOrder(orderId) {
+    return (await this.apiDelete('/order', { orderId }))?.data || [];
+  }
 }
 
 export default new OrderService();

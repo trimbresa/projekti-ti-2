@@ -45,14 +45,41 @@ class OrderRepository extends BaseRepository {
       include: [{
         model: orderItems,
         attributes: ['id'],
-        // include: {
-        //     model: item,
-        //     attributes: ['name', 'price', 'description', 'category']
-        // }
       }]
     });
     return foundOrder;
   }
+
+  async getOrderWithCustomer(id) {
+    const repository = await this.getRepository();
+    const { order, menuItems, item, customer, orderItems } = repository.models;
+
+    const foundOrder = await order.findOne({
+      attributes: ['id', 'phone', 'status', 'customerId'],
+      where: {
+        id
+      },
+      include: [{
+        model: orderItems,
+        attributes: ['id'],
+      }]
+    });
+    return foundOrder;
+  }
+
+  async deleteOrder(orderId) {
+    const repository = await this.getRepository();
+    const { order } = repository.models;
+
+    await order.destroy({
+        where: {
+            id: orderId
+        },
+        cascade: true
+    });
+
+    return true;
+}
 }
 
 module.exports = new OrderRepository()
