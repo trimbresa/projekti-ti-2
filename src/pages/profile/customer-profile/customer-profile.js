@@ -10,13 +10,21 @@ import './customer-profile-styles.scss';
 const initialValues = {
     firstName: '',
     lastName: '',
-    avatarUrl: ''
+    avatarUrl: '',
+    country: '',
+    city: '',
+    location: '',
+    zipCode: '',
 };
 
 const validationSchema = Yup.object().shape({
     firstName: Yup.string().trim().min(2, 'Too Short!').max(255, 'Too long!').required('Required'),
     lastName: Yup.string().trim().min(2, 'Too Short!').max(255, 'Too long!').required('Required'),
     avatarUrl: Yup.string().max(255, 'Too long!'),
+    country: Yup.string().max(255, 'Too long!'),
+    city: Yup.string().max(255, 'Too long!'),
+    location: Yup.string().max(255, 'Too long!'),
+    zipCode: Yup.string().max(255, 'Too long!'),
 });
 
 const CustomerProfile = () => {
@@ -39,11 +47,15 @@ const CustomerProfile = () => {
                 id: appContext?.profile?.id,
                 firstName: data.firstName,
                 lastName: data.lastName,
-                ...appContext.profile.customer && { avatarUrl: data.avatarUrl }
+                ...appContext.profile.customer && { avatarUrl: data.avatarUrl },
+                country: data.country,
+                city: data.city,
+                location: data.location,
+                zipCode: data.zipCode,
             }
-    
+
             await userService.updateProfile(restaurantData);
-        } catch(error) {
+        } catch (error) {
             console.log(error.message)
         } finally {
             setSubmitting(false);
@@ -54,7 +66,13 @@ const CustomerProfile = () => {
         setFieldValue('firstName', appContext.profile.firstName || appContext?.profile?.user?.firstName)
         setFieldValue('lastName', appContext.profile.lastName || appContext?.profile?.user?.lastName)
         setFieldValue('avatarUrl', appContext.profile.customer?.avatarUrl || '')
+        setFieldValue('country', appContext.profile.address?.country || appContext.profile?.user?.address?.country || '')
+        setFieldValue('city', appContext.profile.address?.city || appContext.profile?.user?.address?.city || '')
+        setFieldValue('location', appContext.profile.address?.location || appContext.profile?.user?.address?.location || '')
+        setFieldValue('zipCode', appContext.profile.address?.zipCode || appContext.profile?.user?.address?.zipCode || '')
     }, [appContext, setFieldValue])
+
+    const isRestaurant = "restaurantName" in appContext.profile && true;
 
     return (
         <Card>
@@ -104,28 +122,98 @@ const CustomerProfile = () => {
                             </Form.Floating>
                         </Col>
                     </Row>
-                    {!("restaurantName" in appContext.profile) && <Row className={"mt-4"}>
-                        <Col md={2}>
-                            <Col
-                                className="p-0 customer-profile-card-img bg-primary mb-4"
-                                style={{ backgroundImage: `url('${values.avatarUrl}')` }}
-                            />
-                        </Col>
-                        <Col>
-                            <Form.Floating className="mb-3">
-                                <Form.Control
-                                    id="floatingInputCustom"
-                                    type="text"
-                                    placeholder="Avatar URL"
-                                    name='avatarUrl'
-                                    value={values.avatarUrl}
-                                    onChange={handleChange}
+                    {!isRestaurant &&
+                        <Row className={"mt-4"}>
+                            <Col md={2}>
+                                <Col
+                                    className="p-0 customer-profile-card-img bg-primary mb-4"
+                                    style={{ backgroundImage: `url('${values.avatarUrl}')` }}
                                 />
-                                <label htmlFor="floatingInputCustom">Avatar URL</label>
-                            </Form.Floating>
-                            <label className='text-danger'>{errors.avatarUrl && touched.avatarUrl && errors.avatarUrl}</label>
+                            </Col>
+                            <Col>
+                                <Form.Floating className="mb-3">
+                                    <Form.Control
+                                        id="floatingInputCustom"
+                                        type="text"
+                                        placeholder="Avatar URL"
+                                        name='avatarUrl'
+                                        value={values.avatarUrl}
+                                        onChange={handleChange}
+                                    />
+                                    <label htmlFor="floatingInputCustom">Avatar URL</label>
+                                </Form.Floating>
+                                <label className='text-danger'>{errors.avatarUrl && touched.avatarUrl && errors.avatarUrl}</label>
+                            </Col>
+                        </Row>
+                    }
+                    <Row className={"mt-4"}>
+                        <Col>
+                            <Card className='border-0'>
+                                <Card.Title className="mt-2">Address</Card.Title>
+                                <Card.Body className=' p-0'>
+                                    <Row className={"mt-2"}>
+                                        <Col md={6}>
+                                            <Form.Floating className="mb-3">
+                                                <Form.Control
+                                                    id="floatingInputCustom"
+                                                    type="text"
+                                                    placeholder="Country"
+                                                    name='country'
+                                                    value={values.country}
+                                                    onChange={handleChange}
+                                                />
+                                                <label htmlFor="floatingInputCustom">Country</label>
+                                            </Form.Floating>
+                                            <label className='text-danger'>{errors.country && touched.country && errors.country}</label>
+                                        </Col>
+                                        <Col md={6}>
+                                            <Form.Floating className="mb-3">
+                                                <Form.Control
+                                                    id="floatingInputCustom"
+                                                    type="text"
+                                                    placeholder="City"
+                                                    name='city'
+                                                    value={values.city}
+                                                    onChange={handleChange}
+                                                />
+                                                <label htmlFor="floatingInputCustom">City</label>
+                                            </Form.Floating>
+                                            <label className='text-danger'>{errors.city && touched.city && errors.city}</label>
+                                        </Col>
+                                    </Row>
+                                    <Row className={"mt-2"}>
+                                        <Col md={6}>
+                                            <Form.Floating className="mb-3">
+                                                <Form.Control
+                                                    id="floatingInputCustom"
+                                                    type="text"
+                                                    placeholder="Location"
+                                                    name='location'
+                                                    value={values.location}
+                                                    onChange={handleChange}
+                                                />
+                                                <label htmlFor="floatingInputCustom">Location</label>
+                                            </Form.Floating>
+                                            <label className='text-danger'>{errors.location && touched.location && errors.location}</label>
+                                        </Col>
+                                        <Col md={6}>
+                                            <Form.Floating className="mb-3">
+                                                <Form.Control
+                                                    id="floatingInputCustom"
+                                                    type="text"
+                                                    name='zipCode'
+                                                    value={values.zipCode}
+                                                    onChange={handleChange}
+                                                />
+                                                <label htmlFor="floatingInputCustom">Zip Code</label>
+                                            </Form.Floating>
+                                            <label className='text-danger'>{errors.zipCode && touched.zipCode && errors.zipCode}</label>
+                                        </Col>
+                                    </Row>
+                                </Card.Body>
+                            </Card>
                         </Col>
-                    </Row>}
+                    </Row>
                     <Button variant="primary" className="mt-3" type='submit' disabled={isSubmitting}>
                         {isSubmitting ? 'Submitting...' : 'Submit'}
                     </Button>

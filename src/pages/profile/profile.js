@@ -70,6 +70,8 @@ const Profile = () => {
                 </Badge>
         }
     }
+    
+    const isRestaurant = "restaurantName" in profile && true;
 
     return (
         <>
@@ -82,7 +84,7 @@ const Profile = () => {
                                 <CustomerProfile />
                             </Col>
                         </Row>
-                        {"restaurantName" in profile && <Row>
+                        {isRestaurant && <Row>
                             <Col>
                                 <RestaurantProfile />
                             </Col>
