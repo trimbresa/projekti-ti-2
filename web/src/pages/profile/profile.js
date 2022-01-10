@@ -88,7 +88,7 @@ const Profile = () => {
                             </Col>
                         </Row>}
                     </Col>
-                    <Col md={6}>
+                    {profile.customer?.id && <Col md={6}>
                         <h4>Previous orders {!loading && `(${orders.length})`}</h4>
                         {orders.length === 0 && !loading && <h5 className='text-center mb-0'>No orders to show.</h5>}
                         {orders.map((item, index) => <Card className='mb-3' key={item.id}>
@@ -131,7 +131,7 @@ const Profile = () => {
                                 )}
                             </ListGroup>
                         </Card>)}
-                    </Col>
+                    </Col>}
                 </Row>
             </Container>
             <ConfirmationDialog title='Warning' message='Are you sure you want to delete order?' show={confirmDelete && true} confirming={confirmingDelete} onHide={setConfirmDelete} onConfirm={onDeleteOrderConfirm} />

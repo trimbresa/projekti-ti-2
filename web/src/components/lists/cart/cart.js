@@ -5,11 +5,13 @@ import { FaCartPlus } from 'react-icons/fa';
 import { IoMdClose } from 'react-icons/io';
 import ConfirmationDialog from '../../modals/confirmation-dialog/confirmation-dialog';
 import orderService from '../../../services/order-service';
+import useLocalization from '../../../hooks/use-localization';
 
 export default function Cart() {
   const { cart, setCart } = useApp();
   const [checkoutDialog, setCheckoutDialog] = useState(false);
   const [confirming, setConfirming] = useState(false);
+  const { locale } = useLocalization();
 
   const currencyFormatter = new Intl.NumberFormat('us-US', { style: 'currency', currency: 'EUR' });
 
@@ -49,24 +51,24 @@ export default function Cart() {
       setCheckoutDialog(false);
       setCart([]);
       alert('order has been placed.');
-    } catch(error) {
+    } catch (error) {
       console.log(error.message);
     } finally {
       setConfirming(false);
     }
   }
 
+  const cartLocale = locale.components.cart;
+
   return (
     <>
       <Card>
         <Card.Header>
-          <Card.Title className='mb-0'>
-            Cart
-          </Card.Title>
+          <Card.Title className='mb-0'>{cartLocale.title}</Card.Title>
         </Card.Header>
         <Card.Body className='px-2'>
           <ListGroup variant="flush">
-            {cart.length === 0 && <h5 className='text-center mb-0'>Empty</h5>}
+            {cart.length === 0 && <h5 className='text-center mb-0'>{cartLocale.empty}</h5>}
             {cart.map((cartItem, index) => <ListGroup.Item
               as="li"
               key={index}
@@ -90,17 +92,17 @@ export default function Cart() {
         {cart.length > 0 && <Card.Footer>
           <Row className='align-items-center'>
             <Col>
-              <h5 className='mb-0'>Total: {renderTotalPrice()}</h5>
+              <h5 className='mb-0'>{cartLocale.total}: {renderTotalPrice()}</h5>
             </Col>
             <Col className='d-flex justify-content-end px-1'>
               <Button onClick={checkoutConfirm}>
-                <FaCartPlus className='mb-1' /> Checkout
+                <FaCartPlus className='mb-1' /> {cartLocale.checkout}
               </Button>
             </Col>
           </Row>
         </Card.Footer>}
       </Card>
-      <ConfirmationDialog show={checkoutDialog} confirming={confirming} onHide={setCheckoutDialog} onConfirm={onCheckoutConfirm} title='Warning!' message='Are you sure you want to checkout?' />
+      <ConfirmationDialog show={checkoutDialog} confirming={confirming} onHide={setCheckoutDialog} onConfirm={onCheckoutConfirm} title={cartLocale.checkoutDialog.title} message={cartLocale.checkoutDialog.message} />
     </>
   )
 }

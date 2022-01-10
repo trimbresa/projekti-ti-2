@@ -44,7 +44,6 @@ export default function Login() {
                 throw new Error(res.message);
             }
             localStorage.setItem('token', res.token);
-            appContext.setIsAuthed(true);
             document.location.href = '/';
         } catch (error) {
             setError('Invalid credentials');

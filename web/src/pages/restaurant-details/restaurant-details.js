@@ -19,6 +19,7 @@ import menuService from '../../services/menu-service';
 import MenuDetailsModal from '../../components/modals/menu-details-modal/menu-details-modal';
 import ConfirmationDialog from '../../components/modals/confirmation-dialog/confirmation-dialog';
 import Cart from '../../components/lists/cart/cart';
+import useLocalization from '../../hooks/use-localization';
 
 const RestaurantDetails = () => {
     const { restaurant_id } = useParams();
@@ -29,6 +30,7 @@ const RestaurantDetails = () => {
     const [selectedMenu, setSelectedMenu] = useState(null);
     const [deleteMenu, setDeleteMenu] = useState(null);
     const [loading, setLoading] = useState(true);
+    const { locale } = useLocalization();
 
     const onModalHide = () => {
         setSelectedMenu(null);
@@ -109,6 +111,8 @@ const RestaurantDetails = () => {
     const hasPrivileges = restaurant_id === profile?.id
     const isCustomer = !profile?.restaurantName && true;
 
+    const restaurantDetailsLocale = locale.restaurantDetails;
+
     const onAddToCart = (item) => {
         const existingItemIndex = cart?.findIndex(cartItem => cartItem?.itemDetails?.id === item.id);
 
@@ -144,7 +148,7 @@ const RestaurantDetails = () => {
                         <Col md={6} className='mb-3'>
                             <Row className='mb-4'>
                                 <Col>
-                                    <h4>Menu</h4>
+                                    <h4>{restaurantDetailsLocale.menu}</h4>
                                 </Col>
                                 {isAuthed && hasPrivileges && <Col className='d-flex justify-content-end'>
                                     <Button variant="success" onClick={onAddNew}>+ Add New</Button>

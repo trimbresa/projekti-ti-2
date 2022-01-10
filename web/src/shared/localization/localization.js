@@ -5,6 +5,9 @@ const localization = {
       description: 'Porosit ushqimet e preferuara, nga restorantet e preferuara.',
       restaurantsTitle: 'Restorantet'
     },
+    restaurantDetails: {
+      menu: 'Menyja'
+    },
     login: {
       title: 'Hyrje',
       inputs: {
@@ -87,6 +90,21 @@ const localization = {
             albanian: 'Shqip'
           }
         }
+      },
+      cart: {
+        title: 'Shporta',
+        empty: 'Zbrazët',
+        total: 'Totali',
+        checkout: 'Porosit',
+        checkoutDialog: {
+          title: 'Paralajmërim',
+          message: 'A jeni i sigurt që dëshironi të porositni?',
+        }
+      },
+      shared: {
+        cancel: 'Anulo',
+        confirm: 'Konfirmo',
+        confirming: 'Duke konfirmuar...',
       }
     }
   },
@@ -95,6 +113,9 @@ const localization = {
       banner: 'The biggest website for online food ordering',
       description: 'Order your favorite foods, from your favorite restaurants.',
       restaurantsTitle: 'Restaurants'
+    },
+    restaurantDetails: {
+      menu: 'Menu'
     },
     login: {
       title: 'Login',
@@ -178,6 +199,21 @@ const localization = {
             albanian: 'Albanian'
           }
         }
+      },
+      cart: {
+        title: 'Cart',
+        empty: 'Empty',
+        total: 'Total',
+        checkout: 'Order',
+        checkoutDialog: {
+          title: 'Warning',
+          message: 'Are you sure you want to checkout?',
+        }
+      },
+      shared: {
+        cancel: 'Cancel',
+        confirm: 'Confirm',
+        confirming: 'Confirming...',
       }
     }
   },
