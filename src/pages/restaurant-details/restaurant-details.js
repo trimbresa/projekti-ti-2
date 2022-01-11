@@ -114,28 +114,47 @@ const RestaurantDetails = () => {
     const restaurantDetailsLocale = locale.restaurantDetails;
 
     const onAddToCart = (item) => {
-        const existingItemIndex = cart?.findIndex(cartItem => cartItem?.itemDetails?.id === item.id);
+        const currentRestaurantIndex = cart.findIndex(currentRestaurant => currentRestaurant.restaurantId === restaurant_id);
+        let currentCart = [...cart];
+        let restaurantCart = null;
 
+        if (currentRestaurantIndex !== -1) {
+            restaurantCart = currentCart[currentRestaurantIndex]
+        } else {
+            restaurantCart = {
+                restaurantId: restaurant_id,
+                orderDetails: []
+            }
+            currentCart = [
+                ...currentCart,
+                restaurantCart
+            ]
+        }
+
+        const existingItemIndex = restaurantCart.orderDetails?.findIndex(cartItem => cartItem?.itemDetails?.id === item.id);
+
+        
         if (existingItemIndex !== -1) {
-            const existingItem = cart[existingItemIndex];
-            const updatedCart = [
-                ...cart.slice(0, existingItemIndex),
+            const existingItem = restaurantCart.orderDetails[existingItemIndex];
+            restaurantCart.orderDetails = [
+                ...restaurantCart.orderDetails.slice(0, existingItemIndex),
                 {
                     itemDetails: item,
                     quantity: existingItem.quantity += 1
                 },
-                ...cart.slice(existingItemIndex + 1),
+                ...restaurantCart.orderDetails.slice(existingItemIndex + 1),
             ]
-            return setCart(updatedCart);
-        }
-
-        return setCart([
-            ...cart,
-            {
+        } else {
+            const newOrderItem = {
                 itemDetails: item,
                 quantity: 1
             }
-        ]);
+            restaurantCart.orderDetails.push(newOrderItem);
+        }
+
+        currentCart = updateItemInArray(currentCart, restaurantCart, 'restaurantId');
+
+        return setCart(currentCart);
     }
 
     return (

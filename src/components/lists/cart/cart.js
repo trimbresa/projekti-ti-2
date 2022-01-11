@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Badge, Button, Card, Col, ListGroup, Row } from 'react-bootstrap'
 import useApp from '../../../hooks/use-app';
 import { FaCartPlus } from 'react-icons/fa';
@@ -6,37 +6,50 @@ import { IoMdClose } from 'react-icons/io';
 import ConfirmationDialog from '../../modals/confirmation-dialog/confirmation-dialog';
 import orderService from '../../../services/order-service';
 import useLocalization from '../../../hooks/use-localization';
+import { useParams } from 'react-router-dom';
+import { updateItemInArray } from '../../../utils/utils';
 
 export default function Cart() {
+  const { restaurant_id } = useParams();
   const { cart, setCart } = useApp();
   const [checkoutDialog, setCheckoutDialog] = useState(false);
   const [confirming, setConfirming] = useState(false);
   const { locale } = useLocalization();
+  const [currentCart, setCurrentCart] = useState([]);
 
   const currencyFormatter = new Intl.NumberFormat('us-US', { style: 'currency', currency: 'EUR' });
 
   const renderTotalPrice = () => {
     let total = 0;
-    cart.map(cartItem => total += cartItem.quantity * cartItem.itemDetails.item.price);
+    currentCart.map(cartItem => total += cartItem.quantity * cartItem.itemDetails.item.price);
     return currencyFormatter.format(total);
   }
 
   const removeFromCart = (cartItem) => {
     if (cartItem.quantity === 1) {
-      const filteredCart = cart.filter(item => item.itemDetails.id !== cartItem.itemDetails.id);
-      setCart(filteredCart)
+      const filteredCarts = cart.filter(restaurantCart => restaurantCart.restaurantId !== restaurant_id);
+      setCart(filteredCarts)
     } else {
-      const foundCartItemIndex = cart.findIndex(item => item.itemDetails.id === cartItem.itemDetails.id);
-      const updatedCart = [
-        ...cart.slice(0, foundCartItemIndex),
+      const foundCartItemIndex = currentCart.findIndex(item => item.itemDetails.id === cartItem.itemDetails.id);
+      const updatedCartDetails = [
+        ...cart[foundCartItemIndex].orderDetails.slice(0, foundCartItemIndex),
         {
           ...cartItem,
           quantity: cartItem.quantity -= 1
         },
-        ...cart.slice(foundCartItemIndex + 1),
+        ...cart[foundCartItemIndex].orderDetails.slice(foundCartItemIndex + 1),
       ]
 
-      setCart(updatedCart);
+      const updatedCurrentCart = [...currentCart];
+      updatedCurrentCart.orderDetails = updatedCartDetails;
+
+      const updatedCarts = updateItemInArray(cart, updatedCurrentCart, 'restaurantId');
+
+      console.log(updatedCartDetails)
+      
+      setCurrentCart(updatedCartDetails);
+
+      setCart(updatedCarts);
     }
   }
 
@@ -47,9 +60,11 @@ export default function Cart() {
   const onCheckoutConfirm = async () => {
     setConfirming(true);
     try {
-      await orderService.checkoutOrders(cart);
+      await orderService.checkoutOrders(currentCart);
       setCheckoutDialog(false);
-      setCart([]);
+      const updatedCart = cart.filter(item => item.restaurantId !== restaurant_id);
+      setCurrentCart([]);
+      setCart(updatedCart);
       alert('order has been placed.');
     } catch (error) {
       console.log(error.message);
@@ -57,6 +72,11 @@ export default function Cart() {
       setConfirming(false);
     }
   }
+
+  useEffect(() => {
+    const currentCart = cart.find(item => item.restaurantId === restaurant_id)?.orderDetails ?? [];
+    setCurrentCart(currentCart);
+  }, [cart, restaurant_id])
 
   const cartLocale = locale.components.cart;
 
@@ -68,8 +88,8 @@ export default function Cart() {
         </Card.Header>
         <Card.Body className='px-2'>
           <ListGroup variant="flush">
-            {cart.length === 0 && <h5 className='text-center mb-0'>{cartLocale.empty}</h5>}
-            {cart.map((cartItem, index) => <ListGroup.Item
+            {currentCart.length === 0 && <h5 className='text-center mb-0'>{cartLocale.empty}</h5>}
+            {currentCart.map((cartItem, index) => <ListGroup.Item
               as="li"
               key={index}
               className="d-flex justify-content-between align-items-start"
@@ -89,7 +109,7 @@ export default function Cart() {
             </ListGroup.Item>)}
           </ListGroup>
         </Card.Body>
-        {cart.length > 0 && <Card.Footer>
+        {currentCart.length > 0 && <Card.Footer>
           <Row className='align-items-center'>
             <Col>
               <h5 className='mb-0'>{cartLocale.total}: {renderTotalPrice()}</h5>
