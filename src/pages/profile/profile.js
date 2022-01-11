@@ -8,6 +8,7 @@ import { ORDER_STATUS } from '../../config/constants';
 import orderService from '../../services/order-service';
 import { IoMdClose } from 'react-icons/io';
 import ConfirmationDialog from '../../components/modals/confirmation-dialog/confirmation-dialog';
+import { updateItemInArray } from '../../utils/utils';
 
 const Profile = () => {
     const { profile } = useApp();
@@ -70,7 +71,27 @@ const Profile = () => {
                 </Badge>
         }
     }
-    
+
+    const onStatusChange = async (event, item) => {
+        try {
+            const updatedItem = orders.find(orderItem => orderItem.id === item.id);
+            updatedItem.status = event.target.value;
+            await orderService.updateRestaurantOrder(updatedItem);
+            const updatedOrders = updateItemInArray(orders, updatedItem, 'id');
+            setOrders(updatedOrders);
+        } catch (error) {
+            alert('Failed to change order status!')
+        }
+    }
+
+    const renderEditOrderStatus = (item) => {
+        return <select value={item.status} className='form-control' style={{ width: 100 }} onChange={(event) => onStatusChange(event, item)}>
+            <option value={ORDER_STATUS.OPEN}>Open</option>
+            <option value={ORDER_STATUS.DELIVERED}>Delivered</option>
+            <option value={ORDER_STATUS.CANCELED}>Canceled</option>
+        </select>
+    }
+
     const isRestaurant = "restaurantName" in profile && true;
 
     return (
@@ -90,7 +111,7 @@ const Profile = () => {
                             </Col>
                         </Row>}
                     </Col>
-                    {profile.customer?.id && <Col md={6}>
+                    <Col md={6}>
                         <h4>Previous orders {!loading && `(${orders.length})`}</h4>
                         {orders.length === 0 && !loading && <h5 className='text-center mb-0'>No orders to show.</h5>}
                         {orders.map((item, index) => <Card className='mb-3' key={item.id}>
@@ -104,7 +125,7 @@ const Profile = () => {
                                         </Col>
                                         <Col className='d-flex justify-content-end align-items-center'>
                                             <small>Status:</small>
-                                            {renderOrderStatus(item.status)}
+                                            {isRestaurant ? renderEditOrderStatus(item) : renderOrderStatus(item.status)}
                                             <Button size='sm' variant='danger' style={{ marginLeft: 10 }} onClick={() => deleteOrder(item.id)}>
                                                 <IoMdClose className='mb-1' />
                                             </Button>
@@ -133,7 +154,7 @@ const Profile = () => {
                                 )}
                             </ListGroup>
                         </Card>)}
-                    </Col>}
+                    </Col>
                 </Row>
             </Container>
             <ConfirmationDialog title='Warning' message='Are you sure you want to delete order?' show={confirmDelete && true} confirming={confirmingDelete} onHide={setConfirmDelete} onConfirm={onDeleteOrderConfirm} />

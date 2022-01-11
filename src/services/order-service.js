@@ -5,14 +5,19 @@ class OrderService extends BaseService {
     return (await this.apiGet('/order'))?.data;
   }
 
-  async checkoutOrders(orderItems) {
+  async checkoutOrders(orderItems, restaurantId) {
     const ordersToCheckout = {
+      restaurantId,
       orderItems: orderItems.map(orderItem => ({
         id: orderItem.itemDetails.item.id,
         quantity: orderItem.quantity
       }))
     }
     return (await this.apiPost('/order', ordersToCheckout))?.data || null;
+  }
+
+  async updateRestaurantOrder(orderItem) {
+    return (await this.apiPatch('/order', orderItem))?.data || [];
   }
 
   async deleteOrder(orderId) {

@@ -60,7 +60,7 @@ export default function Cart() {
   const onCheckoutConfirm = async () => {
     setConfirming(true);
     try {
-      await orderService.checkoutOrders(currentCart);
+      await orderService.checkoutOrders(currentCart, restaurant_id);
       setCheckoutDialog(false);
       const updatedCart = cart.filter(item => item.restaurantId !== restaurant_id);
       setCurrentCart([]);
